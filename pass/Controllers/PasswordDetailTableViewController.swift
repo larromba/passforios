@@ -307,17 +307,17 @@ class PasswordDetailTableViewController: UITableViewController, UIGestureRecogni
             newUrlString = "https://\(urlString)"
         }
 
-        try? FavIcon.downloadPreferred(newUrlString) { [weak self] result in
-            if case let .success(image) = result {
-                let indexPath = IndexPath(row: 0, section: 0)
-                self?.passwordImage = image
-                self?.tableView.reloadRows(at: [indexPath], with: UITableView.RowAnimation.automatic)
-                let imageData = image.jpegData(compressionQuality: 1)
-                if let entity = self?.passwordEntity {
-                    self?.passwordStore.updateImage(passwordEntity: entity, image: imageData)
-                }
-            }
-        }
+//        try? FavIcon.downloadPreferred(newUrlString) { [weak self] result in
+//            if case let .success(image) = result {
+//                let indexPath = IndexPath(row: 0, section: 0)
+//                self?.passwordImage = image
+//                self?.tableView.reloadRows(at: [indexPath], with: UITableView.RowAnimation.automatic)
+//                let imageData = image.jpegData(compressionQuality: 1)
+//                if let entity = self?.passwordEntity {
+//                    self?.passwordStore.updateImage(passwordEntity: entity, image: imageData)
+//                }
+//            }
+//        }
     }
 
     @objc
