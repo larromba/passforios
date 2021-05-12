@@ -1206,14 +1206,14 @@
 				TargetAttributes = {
 					30A69944240EED5E00B7D967 = {
 						CreatedOnToolsVersion = 11.3;
-						DevelopmentTeam = 4WDM8E95VU;
-						ProvisioningStyle = Manual;
+						DevelopmentTeam = PFC77GK3D7;
+						ProvisioningStyle = Automatic;
 					};
 					A239F5942158C08B00576CBF = {
 						CreatedOnToolsVersion = 10.0;
-						DevelopmentTeam = 4WDM8E95VU;
+						DevelopmentTeam = PFC77GK3D7;
 						LastSwiftMigration = 1020;
-						ProvisioningStyle = Manual;
+						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.ApplicationGroups.iOS = {
 								enabled = 1;
@@ -1230,15 +1230,16 @@
 					};
 					A260757F1EEC6F34005DB03E = {
 						CreatedOnToolsVersion = 8.3.3;
+						DevelopmentTeam = PFC77GK3D7;
 						LastSwiftMigration = 1020;
 						ProvisioningStyle = Automatic;
 						TestTargetID = DC917BD21E2E8231000FDF54;
 					};
 					A26700231EEC466A00176B8A = {
 						CreatedOnToolsVersion = 8.3.3;
-						DevelopmentTeam = 4WDM8E95VU;
+						DevelopmentTeam = PFC77GK3D7;
 						LastSwiftMigration = 1020;
-						ProvisioningStyle = Manual;
+						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.ApplicationGroups.iOS = {
 								enabled = 1;
@@ -1250,16 +1251,16 @@
 					};
 					DC13B14D1E8640810097803F = {
 						CreatedOnToolsVersion = 8.3;
-						DevelopmentTeam = 4WDM8E95VU;
+						DevelopmentTeam = PFC77GK3D7;
 						LastSwiftMigration = 1020;
 						ProvisioningStyle = Automatic;
 						TestTargetID = DC917BD21E2E8231000FDF54;
 					};
 					DC917BD21E2E8231000FDF54 = {
 						CreatedOnToolsVersion = 8.2.1;
-						DevelopmentTeam = 4WDM8E95VU;
+						DevelopmentTeam = PFC77GK3D7;
 						LastSwiftMigration = 1020;
-						ProvisioningStyle = Manual;
+						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.ApplicationGroups.iOS = {
 								enabled = 1;
@@ -1391,12 +1392,10 @@
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-passKitTests/Pods-passKitTests-frameworks.sh",
 				"${PODS_ROOT}/ObjectivePGP/Frameworks/ios/ObjectivePGP.framework",
-				"${PODS_ROOT}/ObjectivePGP/Frameworks/ios/ObjectivePGP.framework.dSYM",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ObjectivePGP.framework",
-				"${DWARF_DSYM_FOLDER_PATH}/ObjectivePGP.framework.dSYM",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -1441,7 +1440,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = ". \"${SRCROOT}/scripts/swiftformat.sh\"\n";
+			shellScript = "#. \"${SRCROOT}/scripts/swiftformat.sh\"\n";
 		};
 		308800C124EB0D3600E87ED3 /* SwiftLint */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -1459,7 +1458,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = ". \"${SRCROOT}/scripts/swiftlint.sh\"\n";
+			shellScript = "#. \"${SRCROOT}/scripts/swiftlint.sh\"\n";
 		};
 		3EFC287772C1D2B2762FAC45 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -1491,12 +1490,10 @@
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-pass/Pods-pass-frameworks.sh",
 				"${PODS_ROOT}/ObjectivePGP/Frameworks/ios/ObjectivePGP.framework",
-				"${PODS_ROOT}/ObjectivePGP/Frameworks/ios/ObjectivePGP.framework.dSYM",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ObjectivePGP.framework",
-				"${DWARF_DSYM_FOLDER_PATH}/ObjectivePGP.framework.dSYM",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -1880,10 +1877,10 @@
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_ENTITLEMENTS = passShortcuts/PassShortcuts.entitlements;
-				CODE_SIGN_IDENTITY = "iPhone Distribution";
+				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				CODE_SIGN_STYLE = Manual;
-				DEVELOPMENT_TEAM = 4WDM8E95VU;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = "";
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = passShortcuts/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
@@ -1891,9 +1888,9 @@
 				MARKETING_VERSION = 0.12.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = me.mssun.passforios.shortcuts;
+				PRODUCT_BUNDLE_IDENTIFIER = com.larromba.passforios.shortcuts;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "match Development me.mssun.passforios.shortcuts";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -1912,16 +1909,16 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
-				DEVELOPMENT_TEAM = 4WDM8E95VU;
+				DEVELOPMENT_TEAM = PFC77GK3D7;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = passShortcuts/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
 				MARKETING_VERSION = 0.12.0;
 				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = me.mssun.passforios.shortcuts;
+				PRODUCT_BUNDLE_IDENTIFIER = com.larromba.passforios.shortcuts;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "match AppStore me.mssun.passforios.shortcuts";
+				PROVISIONING_PROFILE_SPECIFIER = "ios distribution";
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -1983,7 +1980,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				OTHER_SWIFT_FLAGS = "-D BETA";
-				PRODUCT_BUNDLE_IDENTIFIER = me.mssun.passforiosbeta;
+				PRODUCT_BUNDLE_IDENTIFIER = com.larromba.passforiosbeta;
 				PRODUCT_NAME = "Pass Beta";
 				SDKROOT = iphoneos;
 				STRIP_INSTALLED_PRODUCT = NO;
@@ -2006,7 +2003,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				CURRENT_PROJECT_VERSION = 0;
 				DEFINES_MODULE = NO;
-				DEVELOPMENT_TEAM = 4WDM8E95VU;
+				DEVELOPMENT_TEAM = PFC77GK3D7;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -2021,8 +2018,7 @@
 				OTHER_CFLAGS = "$(inherited)";
 				OTHER_LDFLAGS = "${inherited}";
 				PRODUCT_BUNDLE_IDENTIFIER = "$(PRODUCT_BUNDLE_IDENTIFIER)";
-				PROVISIONING_PROFILE = "ee6e841d-ef77-4f00-b534-d7f1fd25dc1d";
-				PROVISIONING_PROFILE_SPECIFIER = "match AppStore me.mssun.passforiosbeta";
+				PROVISIONING_PROFILE_SPECIFIER = "ios distribution";
 				STRIP_INSTALLED_PRODUCT = NO;
 				SWIFT_OBJC_BRIDGING_HEADER = "pass/Helpers/Objective-CBridgingHeader.h";
 				SWIFT_VERSION = 5.0;
@@ -2036,7 +2032,7 @@
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				DEVELOPMENT_TEAM = 4WDM8E95VU;
+				DEVELOPMENT_TEAM = PFC77GK3D7;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				HEADER_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = passTests/Info.plist;
@@ -2061,7 +2057,7 @@
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CODE_SIGN_ENTITLEMENTS = passExtension/passBetaExtension.entitlements;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
-				DEVELOPMENT_TEAM = 4WDM8E95VU;
+				DEVELOPMENT_TEAM = PFC77GK3D7;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				HEADER_SEARCH_PATHS = "$(inherited)";
@@ -2073,8 +2069,7 @@
 				OTHER_CFLAGS = "$(inherited)";
 				PRODUCT_BUNDLE_IDENTIFIER = "$(PRODUCT_BUNDLE_IDENTIFIER).find-login-action-extension";
 				PRODUCT_NAME = passExtension;
-				PROVISIONING_PROFILE = "cbd86628-6f3e-40f3-b518-20d2330db545";
-				PROVISIONING_PROFILE_SPECIFIER = "match AppStore me.mssun.passforiosbeta.find-login-action-extension";
+				PROVISIONING_PROFILE_SPECIFIER = "ios distribution";
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
 				SWIFT_VERSION = 5.0;
@@ -2133,6 +2128,7 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				DEVELOPMENT_TEAM = PFC77GK3D7;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/Carthage/Build/iOS/ObjectiveGit.framework/Headers/",
@@ -2159,7 +2155,7 @@
 				CODE_SIGN_ENTITLEMENTS = passAutoFillExtension/passBetaAutoFillExtension.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
-				DEVELOPMENT_TEAM = 4WDM8E95VU;
+				DEVELOPMENT_TEAM = PFC77GK3D7;
 				ENABLE_BITCODE = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = passAutoFillExtension/Info.plist;
@@ -2167,9 +2163,9 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
 				MARKETING_VERSION = 0.12.0;
 				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "me.mssun.passforiosbeta.auto-fill-credential-extension";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.larromba.passforiosbeta.auto-fill-credential-extension";
 				PRODUCT_NAME = passAutoFillExtension;
-				PROVISIONING_PROFILE_SPECIFIER = "match AppStore me.mssun.passforiosbeta.auto-fill-credential-extension";
+				PROVISIONING_PROFILE_SPECIFIER = "ios distribution";
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
 				SWIFT_VERSION = 5.0;
@@ -2189,16 +2185,16 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
-				DEVELOPMENT_TEAM = 4WDM8E95VU;
+				DEVELOPMENT_TEAM = PFC77GK3D7;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = passShortcuts/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
 				MARKETING_VERSION = 0.12.0;
 				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = me.mssun.passforiosbeta.shortcuts;
+				PRODUCT_BUNDLE_IDENTIFIER = com.larromba.passforiosbeta.shortcuts;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "match AppStore me.mssun.passforiosbeta.shortcuts";
+				PROVISIONING_PROFILE_SPECIFIER = "ios distribution";
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -2214,9 +2210,9 @@
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_ENTITLEMENTS = passAutoFillExtension/passAutoFillExtension.entitlements;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				CODE_SIGN_STYLE = Manual;
-				DEVELOPMENT_TEAM = 4WDM8E95VU;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = "";
 				ENABLE_BITCODE = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = passAutoFillExtension/Info.plist;
@@ -2225,9 +2221,9 @@
 				MARKETING_VERSION = 0.12.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "me.mssun.passforios.auto-fill-credential-extension";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.larromba.passforios.auto-fill-credential-extension";
 				PRODUCT_NAME = passAutoFillExtension;
-				PROVISIONING_PROFILE_SPECIFIER = "match Development me.mssun.passforios.auto-fill-credential-extension";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
 				SWIFT_VERSION = 5.0;
@@ -2246,7 +2242,7 @@
 				CODE_SIGN_ENTITLEMENTS = passAutoFillExtension/passAutoFillExtension.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
-				DEVELOPMENT_TEAM = 4WDM8E95VU;
+				DEVELOPMENT_TEAM = PFC77GK3D7;
 				ENABLE_BITCODE = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = passAutoFillExtension/Info.plist;
@@ -2254,9 +2250,9 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
 				MARKETING_VERSION = 0.12.0;
 				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "me.mssun.passforios.auto-fill-credential-extension";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.larromba.passforios.auto-fill-credential-extension";
 				PRODUCT_NAME = passAutoFillExtension;
-				PROVISIONING_PROFILE_SPECIFIER = "match AppStore me.mssun.passforios.auto-fill-credential-extension";
+				PROVISIONING_PROFILE_SPECIFIER = "ios distribution";
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
 				SWIFT_VERSION = 5.0;
@@ -2360,6 +2356,7 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				DEVELOPMENT_TEAM = PFC77GK3D7;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/Carthage/Build/iOS/ObjectiveGit.framework/Headers/",
@@ -2382,6 +2379,7 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				DEVELOPMENT_TEAM = PFC77GK3D7;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/Carthage/Build/iOS/ObjectiveGit.framework/Headers/",
@@ -2407,8 +2405,10 @@
 				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = NO;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CODE_SIGN_ENTITLEMENTS = passExtension/passExtension.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				DEVELOPMENT_TEAM = 4WDM8E95VU;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = "";
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				HEADER_SEARCH_PATHS = "$(inherited)";
@@ -2420,8 +2420,7 @@
 				OTHER_CFLAGS = "$(inherited)";
 				PRODUCT_BUNDLE_IDENTIFIER = "$(PRODUCT_BUNDLE_IDENTIFIER).find-login-action-extension";
 				PRODUCT_NAME = passExtension;
-				PROVISIONING_PROFILE = "d25c9029-bca6-4b2d-b04e-4abc9d232740";
-				PROVISIONING_PROFILE_SPECIFIER = "match Development me.mssun.passforios.find-login-action-extension";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
 				SWIFT_VERSION = 5.0;
@@ -2440,7 +2439,7 @@
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CODE_SIGN_ENTITLEMENTS = passExtension/passExtension.entitlements;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
-				DEVELOPMENT_TEAM = 4WDM8E95VU;
+				DEVELOPMENT_TEAM = PFC77GK3D7;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				HEADER_SEARCH_PATHS = "$(inherited)";
@@ -2452,8 +2451,7 @@
 				OTHER_CFLAGS = "$(inherited)";
 				PRODUCT_BUNDLE_IDENTIFIER = "$(PRODUCT_BUNDLE_IDENTIFIER).find-login-action-extension";
 				PRODUCT_NAME = passExtension;
-				PROVISIONING_PROFILE = "cbd86628-6f3e-40f3-b518-20d2330db545";
-				PROVISIONING_PROFILE_SPECIFIER = "match AppStore me.mssun.passforios.find-login-action-extension";
+				PROVISIONING_PROFILE_SPECIFIER = "ios distribution";
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
 				SWIFT_VERSION = 5.0;
@@ -2466,7 +2464,7 @@
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				DEVELOPMENT_TEAM = 4WDM8E95VU;
+				DEVELOPMENT_TEAM = PFC77GK3D7;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				HEADER_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = passTests/Info.plist;
@@ -2485,7 +2483,7 @@
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				DEVELOPMENT_TEAM = 4WDM8E95VU;
+				DEVELOPMENT_TEAM = PFC77GK3D7;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				HEADER_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = passTests/Info.plist;
@@ -2560,7 +2558,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = me.mssun.passforios;
+				PRODUCT_BUNDLE_IDENTIFIER = com.larromba.passforios;
 				PRODUCT_NAME = Pass;
 				SDKROOT = iphoneos;
 				STRIP_INSTALLED_PRODUCT = NO;
@@ -2625,7 +2623,7 @@
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
-				PRODUCT_BUNDLE_IDENTIFIER = me.mssun.passforios;
+				PRODUCT_BUNDLE_IDENTIFIER = com.larromba.passforios;
 				PRODUCT_NAME = Pass;
 				SDKROOT = iphoneos;
 				STRIP_INSTALLED_PRODUCT = NO;
@@ -2644,11 +2642,12 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = NO;
 				CODE_SIGN_ENTITLEMENTS = pass/pass.entitlements;
-				CODE_SIGN_IDENTITY = "iPhone Distribution";
+				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 0;
 				DEFINES_MODULE = NO;
-				DEVELOPMENT_TEAM = 4WDM8E95VU;
+				DEVELOPMENT_TEAM = PFC77GK3D7;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -2663,8 +2662,7 @@
 				OTHER_CFLAGS = "$(inherited)";
 				OTHER_LDFLAGS = "${inherited}";
 				PRODUCT_BUNDLE_IDENTIFIER = "$(PRODUCT_BUNDLE_IDENTIFIER)";
-				PROVISIONING_PROFILE = "3c4f599a-ce77-4184-b4c4-edebf09cba3b";
-				PROVISIONING_PROFILE_SPECIFIER = "match Development me.mssun.passforios";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				STRIP_INSTALLED_PRODUCT = NO;
 				SWIFT_OBJC_BRIDGING_HEADER = "pass/Helpers/Objective-CBridgingHeader.h";
 				SWIFT_VERSION = 5.0;
@@ -2685,7 +2683,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				CURRENT_PROJECT_VERSION = 0;
 				DEFINES_MODULE = NO;
-				DEVELOPMENT_TEAM = 4WDM8E95VU;
+				DEVELOPMENT_TEAM = PFC77GK3D7;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -2700,8 +2698,7 @@
 				OTHER_CFLAGS = "$(inherited)";
 				OTHER_LDFLAGS = "${inherited}";
 				PRODUCT_BUNDLE_IDENTIFIER = "$(PRODUCT_BUNDLE_IDENTIFIER)";
-				PROVISIONING_PROFILE = "ee6e841d-ef77-4f00-b534-d7f1fd25dc1d";
-				PROVISIONING_PROFILE_SPECIFIER = "match AppStore me.mssun.passforios";
+				PROVISIONING_PROFILE_SPECIFIER = "ios distribution";
 				STRIP_INSTALLED_PRODUCT = NO;
 				SWIFT_OBJC_BRIDGING_HEADER = "pass/Helpers/Objective-CBridgingHeader.h";
 				SWIFT_VERSION = 5.0;
