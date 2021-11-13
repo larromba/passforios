@@ -108,11 +108,12 @@
 		556EC3D922335D2800934F9C /* Localizable.stringsdict in Resources */ = {isa = PBXBuildFile; fileRef = 30BF5ED521ED2434000E4154 /* Localizable.stringsdict */; };
 		556EC3DA22335D3400934F9C /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 30C25DBF21F3599E00BB27BB /* InfoPlist.strings */; };
 		556EC3DB22335D3D00934F9C /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 30C25DBF21F3599E00BB27BB /* InfoPlist.strings */; };
+		7F39FD6B2740772A00DCF1CF /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DC917BDD1E2E8231000FDF54 /* Assets.xcassets */; };
+		7F39FD6C2740772B00DCF1CF /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DC917BDD1E2E8231000FDF54 /* Assets.xcassets */; };
+		7F8A7B2D2740081B00D83DA2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DC917BDD1E2E8231000FDF54 /* Assets.xcassets */; };
 		9A1D1CE526E5D1CE0052028E /* OneTimePassword in Frameworks */ = {isa = PBXBuildFile; productRef = 9A1D1CE426E5D1CE0052028E /* OneTimePassword */; };
 		9A1D1CE726E5D2230052028E /* OneTimePassword in Frameworks */ = {isa = PBXBuildFile; productRef = 9A1D1CE626E5D2230052028E /* OneTimePassword */; };
 		9A1F47FA26E5CF4B000C0E01 /* OneTimePassword in Frameworks */ = {isa = PBXBuildFile; productRef = 9A1F47F926E5CF4B000C0E01 /* OneTimePassword */; };
-		9A55C158259E785600FA8FD9 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DC917BDD1E2E8231000FDF54 /* Assets.xcassets */; };
-		9A55C15F259E785700FA8FD9 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DC917BDD1E2E8231000FDF54 /* Assets.xcassets */; };
 		9A55C185259E8C5600FA8FD9 /* PasswordsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A55C184259E8C5600FA8FD9 /* PasswordsViewController.swift */; };
 		9A5865F025AA944B006719C2 /* SearchPassword.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9A5865EF25AA944B006719C2 /* SearchPassword.storyboard */; };
 		9A58661425AAA4C1006719C2 /* PasscodeExtensionDisplay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30697C5121F63E0B0064FCAC /* PasscodeExtensionDisplay.swift */; };
@@ -151,7 +152,6 @@
 		A217ACE41E9BBBBD00A1A6CF /* GitConfigSettingsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A217ACE31E9BBBBD00A1A6CF /* GitConfigSettingsTableViewController.swift */; };
 		A2367BA01EF0387000C8FE8B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A2367B9F1EF0387000C8FE8B /* Assets.xcassets */; };
 		A239F59C2158C08C00576CBF /* MainInterface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A239F59A2158C08C00576CBF /* MainInterface.storyboard */; };
-		A23DD0DC233FB46900E6CD83 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A23DD0DB233FB46900E6CD83 /* Assets.xcassets */; };
 		A26075811EEC6F34005DB03E /* passKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A26075781EEC6F34005DB03E /* passKit.framework */; };
 		A260758A1EEC6F34005DB03E /* passKit.h in Headers */ = {isa = PBXBuildFile; fileRef = A260757A1EEC6F34005DB03E /* passKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A26075AD1EEC7125005DB03E /* pass.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = A26075A51EEC7125005DB03E /* pass.xcdatamodeld */; };
@@ -183,7 +183,6 @@
 		DC8963C01E38EEB900828B09 /* SSHKeyUrlImportTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC8963BF1E38EEB900828B09 /* SSHKeyUrlImportTableViewController.swift */; };
 		DC917BD71E2E8231000FDF54 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC917BD61E2E8231000FDF54 /* AppDelegate.swift */; };
 		DC917BDC1E2E8231000FDF54 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DC917BDA1E2E8231000FDF54 /* Main.storyboard */; };
-		DC917BDE1E2E8231000FDF54 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DC917BDD1E2E8231000FDF54 /* Assets.xcassets */; };
 		DC917BE11E2E8231000FDF54 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DC917BDF1E2E8231000FDF54 /* LaunchScreen.storyboard */; };
 		DC962CDF1E4B62C10033B5D8 /* AboutTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC962CDE1E4B62C10033B5D8 /* AboutTableViewController.swift */; };
 		DCA0499A1E335CC800522E8F /* GitRepositorySettingsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DCA049991E335CC800522E8F /* GitRepositorySettingsTableViewController.swift */; };
@@ -1201,7 +1200,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 1130;
-				LastUpgradeCheck = 1230;
+				LastUpgradeCheck = 1300;
 				ORGANIZATIONNAME = "Bob Sun";
 				TargetAttributes = {
 					30A69944240EED5E00B7D967 = {
@@ -1313,7 +1312,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9A55C15F259E785700FA8FD9 /* Assets.xcassets in Resources */,
+				7F39FD6C2740772B00DCF1CF /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1325,7 +1324,7 @@
 				556EC3D322335C5F00934F9C /* Localizable.strings in Resources */,
 				556EC3D422335C5F00934F9C /* Localizable.stringsdict in Resources */,
 				A239F59C2158C08C00576CBF /* MainInterface.storyboard in Resources */,
-				9A55C158259E785600FA8FD9 /* Assets.xcassets in Resources */,
+				7F39FD6B2740772A00DCF1CF /* Assets.xcassets in Resources */,
 				9A5865F025AA944B006719C2 /* SearchPassword.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1336,7 +1335,6 @@
 			files = (
 				556EC3DA22335D3400934F9C /* InfoPlist.strings in Resources */,
 				556EC3D522335CD900934F9C /* Localizable.strings in Resources */,
-				A23DD0DC233FB46900E6CD83 /* Assets.xcassets in Resources */,
 				556EC3D622335CD900934F9C /* Localizable.stringsdict in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1378,8 +1376,8 @@
 				30BF5EC821EA8FB5000E4154 /* Localizable.strings in Resources */,
 				30C25DBD21F3599E00BB27BB /* InfoPlist.strings in Resources */,
 				DCFB77A31E500D9C008DE471 /* PasswordDetailTitleTableViewCell.xib in Resources */,
-				DC917BDE1E2E8231000FDF54 /* Assets.xcassets in Resources */,
 				30BF5ED721ED2434000E4154 /* Localizable.stringsdict in Resources */,
+				7F8A7B2D2740081B00D83DA2 /* Assets.xcassets in Resources */,
 				DCDDEAB01E4639F300F68193 /* LabelTableViewCell.xib in Resources */,
 				DC917BDC1E2E8231000FDF54 /* Main.storyboard in Resources */,
 				A2802BFA1E70813A00879216 /* SliderTableViewCell.xib in Resources */,
@@ -1392,46 +1390,6 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		1089981FB64E3738DF938F5E /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-passKitTests/Pods-passKitTests-frameworks.sh",
-				"${PODS_ROOT}/ObjectivePGP/Frameworks/ios/ObjectivePGP.framework",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ObjectivePGP.framework",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-passKitTests/Pods-passKitTests-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		1BB5DAFEBEB84E2A89D2CE62 /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-passKit-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
 		3005F34F24A9143C000519B5 /* SwiftFormat */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -1486,7 +1444,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = ". \"${SRCROOT}/scripts/swiftlint.sh\"\n";
+			shellScript = "#. \"${SRCROOT}/scripts/swiftlint.sh\"\n";
 		};
 		9A996C4726DDEAF100A4485D /* Remove SPM Duplicate Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -1838,9 +1796,9 @@
 				CODE_SIGN_ENTITLEMENTS = passShortcuts/PassShortcuts.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = "";
+				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				HEADER_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = passShortcuts/Info.plist;
@@ -1874,8 +1832,8 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
-				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				DEVELOPMENT_TEAM = PFC77GK3D7;
+				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				HEADER_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = passShortcuts/Info.plist;
@@ -2176,8 +2134,8 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
-				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				DEVELOPMENT_TEAM = PFC77GK3D7;
+				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				HEADER_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = passShortcuts/Info.plist;
