@@ -1,3 +1,5 @@
+#!/bin/bash
+
 # This script is a work around for Carthage bug with Xcode 12.
 # Source : https://github.com/Carthage/Carthage/blob/master/Documentation/Xcode12Workaround.md
 
@@ -19,4 +21,3 @@ echo 'EXCLUDED_ARCHS = $(inherited) $(EXCLUDED_ARCHS__EFFECTIVE_PLATFORM_SUFFIX_
 
 export XCODE_XCCONFIG_FILE="$xcconfig"
 carthage "$@"
-
