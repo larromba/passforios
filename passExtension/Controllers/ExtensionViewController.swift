@@ -15,9 +15,7 @@ class ExtensionViewController: UIViewController {
         PasscodeExtensionDisplay(extensionContext: extensionContext!)
     }()
 
-    private lazy var passwordsViewController: PasswordsViewController = {
-        (children.first as! UINavigationController).viewControllers.first as! PasswordsViewController
-    }()
+    private lazy var passwordsViewController: PasswordsViewController = (children.first as! UINavigationController).viewControllers.first as! PasswordsViewController
 
     private lazy var credentialProvider: CredentialProvider = { [unowned self] in
         CredentialProvider(viewController: self, extensionContext: extensionContext!, afterDecryption: NotificationCenterDispatcher.showOTPNotification)
@@ -48,7 +46,7 @@ class ExtensionViewController: UIViewController {
         super.viewWillAppear(animated)
         prepareCredentialList()
         passcodelock.presentPasscodeLockIfNeeded(self, after: { [unowned self] in
-            self.view.isHidden = false
+            view.isHidden = false
         })
     }
 
@@ -107,7 +105,8 @@ extension NSDictionary {
                 return host
             }
             return value
-        } else if let value = self[NSExtensionJavaScriptPreprocessingResultsKey] as? String {
+        }
+        if let value = self[NSExtensionJavaScriptPreprocessingResultsKey] as? String {
             if let host = URL(string: value)?.host {
                 return host
             }

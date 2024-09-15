@@ -14,9 +14,7 @@ class CredentialProviderViewController: ASCredentialProviderViewController {
         PasscodeExtensionDisplay(extensionContext: extensionContext)
     }()
 
-    private lazy var passwordsViewController: PasswordsViewController = {
-        (children.first as! UINavigationController).viewControllers.first as! PasswordsViewController
-    }()
+    private lazy var passwordsViewController: PasswordsViewController = (children.first as! UINavigationController).viewControllers.first as! PasswordsViewController
 
     private lazy var credentialProvider: CredentialProvider = { [unowned self] in
         CredentialProvider(viewController: self, extensionContext: extensionContext, afterDecryption: NotificationCenterDispatcher.showOTPNotification)
@@ -40,13 +38,13 @@ class CredentialProviderViewController: ASCredentialProviderViewController {
         passcodelock.presentPasscodeLockIfNeeded(self) {
             self.view.isHidden = true
         } after: { [unowned self] in
-            self.view.isHidden = false
-            self.credentialProvider.identifier = serviceIdentifiers.first
+            view.isHidden = false
+            credentialProvider.identifier = serviceIdentifiers.first
             let url = serviceIdentifiers.first
                 .map(\.identifier)
                 .flatMap(URL.init)
-            self.passwordsViewController.navigationItem.prompt = url?.host
-            self.passwordsViewController.showPasswordsWithSuggestion(matching: url?.host ?? "")
+            passwordsViewController.navigationItem.prompt = url?.host
+            passwordsViewController.showPasswordsWithSuggestion(matching: url?.host ?? "")
         }
     }
 
@@ -63,7 +61,7 @@ class CredentialProviderViewController: ASCredentialProviderViewController {
         passcodelock.presentPasscodeLockIfNeeded(self) {
             self.view.isHidden = true
         } after: { [unowned self] in
-            self.credentialProvider.credentials(for: credentialIdentity)
+            credentialProvider.credentials(for: credentialIdentity)
         }
     }
 

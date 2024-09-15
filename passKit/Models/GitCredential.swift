@@ -61,7 +61,7 @@ public struct GitCredential {
         case .password:
             return Self(credentialType: .http(userName: userName), keyStore: keyStore)
         case .key:
-            let privateKey: String = keyStore.get(for: SshKey.PRIVATE.getKeychainKey()) ?? ""
+            let privateKey: String = keyStore.get(for: SSHKey.PRIVATE.getKeychainKey()) ?? ""
             return Self(credentialType: .ssh(userName: userName, privateKey: privateKey), keyStore: keyStore)
         }
     }
@@ -77,14 +77,14 @@ public struct GitCredential {
     private func createCredentialProvider(_ passwordProvider: @escaping PasswordProvider) -> GTCredentialProvider {
         var attempts = 1
         return GTCredentialProvider { _, _, _ -> GTCredential? in
-            if attempts > self.credentialType.allowedAttempts {
+            if attempts > credentialType.allowedAttempts {
                 return nil
             }
-            guard let password = self.getPassword(attempts: attempts, passwordProvider: passwordProvider) else {
+            guard let password = getPassword(attempts: attempts, passwordProvider: passwordProvider) else {
                 return nil
             }
             attempts += 1
-            return try? self.credentialType.createGTCredential(password: password)
+            return try? credentialType.createGTCredential(password: password)
         }
     }
 

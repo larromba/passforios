@@ -10,10 +10,8 @@ import passKit
 
 class PasscodeExtensionDisplay {
     private let passcodeLockVC: PasscodeLockViewControllerForExtension
-    private let extensionContext: NSExtensionContext?
 
     init(extensionContext: NSExtensionContext) {
-        self.extensionContext = extensionContext
         self.passcodeLockVC = PasscodeLockViewControllerForExtension(extensionContext: extensionContext)
         passcodeLockVC.setCancellable(true)
     }
@@ -24,9 +22,7 @@ class PasscodeExtensionDisplay {
             before?()
             passcodeLockVC.successCallback = after
             passcodeLockVC.modalPresentationStyle = .fullScreen
-            sender.parent?.present(passcodeLockVC, animated: false) {
-                after?()
-            }
+            sender.parent?.present(passcodeLockVC, animated: false)
         } else {
             after?()
         }

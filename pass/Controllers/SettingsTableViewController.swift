@@ -10,6 +10,7 @@ import CoreData
 import passKit
 import SVProgressHUD
 import UIKit
+import YubiKit
 
 class SettingsTableViewController: UITableViewController, UITabBarControllerDelegate {
     @IBOutlet var pgpKeyTableViewCell: UITableViewCell!
@@ -17,7 +18,6 @@ class SettingsTableViewController: UITableViewController, UITabBarControllerDele
     @IBOutlet var passwordRepositoryTableViewCell: UITableViewCell!
     var setPasscodeLockAlert: UIAlertController?
 
-    let passwordStore = PasswordStore.shared
     let keychain = AppKeychain.shared
     var passcodeLock = PasscodeLock.shared
 
@@ -88,11 +88,15 @@ class SettingsTableViewController: UITableViewController, UITabBarControllerDele
 
     private func setPGPKeyTableViewCellDetailText() {
         var label = "NotSet".localize()
+
         let keyID = (try? PGPAgent.shared.getShortKeyID()) ?? []
         if keyID.count == 1 {
             label = keyID.first ?? ""
         } else if keyID.count > 1 {
             label = "Multiple"
+        }
+        if Defaults.isYubiKeyEnabled {
+            label += "+YubiKey"
         }
         pgpKeyTableViewCell.detailTextLabel?.text = label
     }
@@ -150,7 +154,7 @@ class SettingsTableViewController: UITableViewController, UITabBarControllerDele
     func showPGPKeyActionSheet() {
         let optionMenu = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
         optionMenu.addAction(
-            UIAlertAction(title: PGPKeyUrlImportTableViewController.menuLabel, style: .default) { _ in
+            UIAlertAction(title: PGPKeyURLImportTableViewController.menuLabel, style: .default) { _ in
                 self.performSegue(withIdentifier: "setPGPKeyByURLSegue", sender: self)
             }
         )
@@ -181,14 +185,26 @@ class SettingsTableViewController: UITableViewController, UITabBarControllerDele
             )
         }
 
+        if YubiKitDeviceCapabilities.supportsISO7816NFCTags {
+            optionMenu.addAction(
+                UIAlertAction(title: Defaults.isYubiKeyEnabled ? "✓ YubiKey" : "YubiKey", style: .default) { _ in
+                    Defaults.isYubiKeyEnabled.toggle()
+                    self.setPGPKeyTableViewCellDetailText()
+                }
+            )
+        }
+
         if Defaults.pgpKeySource != nil {
             optionMenu.addAction(
                 UIAlertAction(title: "RemovePgpKeys".localize(), style: .destructive) { _ in
-                    self.keychain.removeContent(for: PgpKey.PUBLIC.getKeychainKey())
-                    self.keychain.removeContent(for: PgpKey.PRIVATE.getKeychainKey())
-                    PGPAgent.shared.uninitKeys()
-                    self.pgpKeyTableViewCell.detailTextLabel?.text = "NotSet".localize()
-                    Defaults.pgpKeySource = nil
+                    let alert = UIAlertController.removeConfirmationAlert(title: "RemovePgpKeys".localize(), message: "") { _ in
+                        self.keychain.removeContent(for: PGPKey.PUBLIC.getKeychainKey())
+                        self.keychain.removeContent(for: PGPKey.PRIVATE.getKeychainKey())
+                        PGPAgent.shared.uninitKeys()
+                        self.pgpKeyTableViewCell.detailTextLabel?.text = "NotSet".localize()
+                        Defaults.pgpKeySource = nil
+                    }
+                    self.present(alert, animated: true, completion: nil)
                 }
             )
         }
@@ -225,7 +241,7 @@ class SettingsTableViewController: UITableViewController, UITabBarControllerDele
     @objc
     func alertTextFieldDidChange(_ sender: UITextField) {
         // check whether we should enable the Save button in setPasscodeLockAlert
-        if let setPasscodeLockAlert = setPasscodeLockAlert,
+        if let setPasscodeLockAlert,
            let setPasscodeLockAlertTextFields0 = setPasscodeLockAlert.textFields?[0],
            let setPasscodeLockAlertTextFields1 = setPasscodeLockAlert.textFields?[1] {
             if sender == setPasscodeLockAlertTextFields0 || sender == setPasscodeLockAlertTextFields1 {
@@ -240,19 +256,19 @@ class SettingsTableViewController: UITableViewController, UITabBarControllerDele
     func setPasscodeLock() {
         // prepare the alert for setting the passcode
         setPasscodeLockAlert = UIAlertController(title: "SetPasscode".localize(), message: "FillInAppPasscode.".localize(), preferredStyle: .alert)
-        setPasscodeLockAlert?.addTextField { textField -> Void in
+        setPasscodeLockAlert?.addTextField { textField in
             textField.placeholder = "Passcode".localize()
             textField.isSecureTextEntry = true
             textField.addTarget(self, action: #selector(self.alertTextFieldDidChange), for: UIControl.Event.editingChanged)
         }
-        setPasscodeLockAlert?.addTextField { textField -> Void in
+        setPasscodeLockAlert?.addTextField { textField in
             textField.placeholder = "PasswordConfirmation".localize()
             textField.isSecureTextEntry = true
             textField.addTarget(self, action: #selector(self.alertTextFieldDidChange), for: UIControl.Event.editingChanged)
         }
 
         // save action
-        let saveAction = UIAlertAction(title: "Save".localize(), style: .default) { (_: UIAlertAction) -> Void in
+        let saveAction = UIAlertAction(title: "Save".localize(), style: .default) { (_: UIAlertAction) in
             let passcode: String = self.setPasscodeLockAlert!.textFields![0].text!
             self.passcodeLock.save(passcode: passcode)
             // refresh the passcode lock cell ("On")
@@ -275,12 +291,12 @@ extension SettingsTableViewController: PGPKeyImporter {
     static let label = "ITunesFileSharing".localize()
 
     func isReadyToUse() -> Bool {
-        KeyFileManager.PublicPgp.doesKeyFileExist() && KeyFileManager.PrivatePgp.doesKeyFileExist()
+        KeyFileManager.PublicPGP.doesKeyFileExist() && KeyFileManager.PrivatePGP.doesKeyFileExist()
     }
 
     func importKeys() throws {
-        try KeyFileManager.PublicPgp.importKeyFromFileSharing()
-        try KeyFileManager.PrivatePgp.importKeyFromFileSharing()
+        try KeyFileManager.PublicPGP.importKeyFromFileSharing()
+        try KeyFileManager.PrivatePGP.importKeyFromFileSharing()
     }
 
     func saveImportedKeys() {

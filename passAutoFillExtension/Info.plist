@@ -20,14 +20,21 @@
 	<string>$(MARKETING_VERSION)</string>
 	<key>CFBundleVersion</key>
 	<string>0</string>
-	<key>NSFaceIDUsageDescription</key>
-	<string>Enable access to Face ID to unlock Pass.</string>
 	<key>NSExtension</key>
 	<dict>
 		<key>NSExtensionMainStoryboard</key>
 		<string>MainInterface</string>
 		<key>NSExtensionPointIdentifier</key>
 		<string>com.apple.authentication-services-credential-provider-ui</string>
+	</dict>
+	<key>NSFaceIDUsageDescription</key>
+	<string>Enable access to Face ID to unlock Pass.</string>
+	<key>UIApplicationSceneManifest</key>
+	<dict>
+		<key>UIApplicationSupportsMultipleScenes</key>
+		<false/>
+		<key>UISceneConfigurations</key>
+		<dict/>
 	</dict>
 </dict>
 </plist>

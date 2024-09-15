@@ -51,6 +51,10 @@ public class Password {
         getAdditionValue(withKey: Constants.USERNAME_KEYWORD)
     }
 
+    public var user: String? {
+        getAdditionValue(withKey: Constants.USER_KEYWORD)
+    }
+
     public var login: String? {
         getAdditionValue(withKey: Constants.LOGIN_KEYWORD)
     }
@@ -109,7 +113,7 @@ public class Password {
 
     private func checkPasswordForOtpToken() {
         let (key, value) = Parser.getKeyValuePair(from: password)
-        if let key = key, Constants.isOtpKeyword(key) {
+        if let key, Constants.isOtpKeyword(key) {
             firstLineIsOTPField = true
             additions.append(key => value)
         } else {
@@ -121,6 +125,7 @@ public class Password {
         additions.filter { field in
             let title = field.title.lowercased()
             return title != Constants.USERNAME_KEYWORD
+                && title != Constants.USER_KEYWORD
                 && title != Constants.LOGIN_KEYWORD
                 && title != Constants.PASSWORD_KEYWORD
                 && (!Constants.isUnknown(title) || !Defaults.isHideUnknownOn)
@@ -139,7 +144,7 @@ public class Password {
     ///
     ///     otpauth://totp/totp-secret?secret=AAAAAAAAAAAAAAAA&issuer=totp-secret
     ///
-    /// See also [Key Uri Format](https://github.com/google/google-authenticator/wiki/Key-Uri-Format).
+    /// See also [Key URI Format](https://github.com/google/google-authenticator/wiki/Key-URI-Format).
     ///
     /// In case no otpauth is given in the password file, try to construct the token from separate fields using a
     /// `TokenBuilder`. This means that tokens provided as otpauth have higher priority.
@@ -150,7 +155,7 @@ public class Password {
             if !otpauthString.hasPrefix("\(Constants.OTPAUTH):") {
                 otpauthString = "\(Constants.OTPAUTH):\(otpauthString)"
             }
-            if let otpauthUrl = URL(string: otpauthString), let token = Token(url: otpauthUrl) {
+            if let otpauthURL = URL(string: otpauthString), let token = Token(url: otpauthURL) {
                 otpToken = token
                 return
             }
@@ -215,6 +220,6 @@ public class Password {
     }
 
     public func getUsernameForCompletion() -> String {
-        username ?? login ?? nameFromPath ?? ""
+        username ?? user ?? login ?? nameFromPath ?? ""
     }
 }

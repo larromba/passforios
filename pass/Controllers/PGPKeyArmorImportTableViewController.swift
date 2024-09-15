@@ -101,7 +101,7 @@ extension PGPKeyArmorImportTableViewController: PGPKeyImporter {
             Utils.alert(title: "CannotSave".localize(), message: "SetPublicKey.".localize(), controller: self, completion: nil)
             return false
         }
-        guard !armorPrivateKeyTextView.text.isEmpty else {
+        guard Defaults.isYubiKeyEnabled || !armorPrivateKeyTextView.text.isEmpty else {
             Utils.alert(title: "CannotSave".localize(), message: "SetPrivateKey.".localize(), controller: self, completion: nil)
             return false
         }
@@ -109,8 +109,8 @@ extension PGPKeyArmorImportTableViewController: PGPKeyImporter {
     }
 
     func importKeys() throws {
-        try KeyFileManager.PublicPgp.importKey(from: armorPublicKey ?? "")
-        try KeyFileManager.PrivatePgp.importKey(from: armorPrivateKey ?? "")
+        try KeyFileManager.PublicPGP.importKey(from: armorPublicKey ?? "")
+        try KeyFileManager.PrivatePGP.importKey(from: armorPrivateKey ?? "")
     }
 
     func saveImportedKeys() {

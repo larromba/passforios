@@ -6,6 +6,7 @@
 //  Copyright © 2017 Bob Sun. All rights reserved.
 //
 
+import AuthenticationServices
 import passKit
 import SVProgressHUD
 import UIKit
@@ -15,9 +16,10 @@ class AdvancedSettingsTableViewController: UITableViewController {
     @IBOutlet var gitSignatureTableViewCell: UITableViewCell!
     @IBOutlet var eraseDataTableViewCell: UITableViewCell!
     @IBOutlet var discardChangesTableViewCell: UITableViewCell!
+    @IBOutlet var clearSuggestionsTableViewCell: UITableViewCell!
     let passwordStore = PasswordStore.shared
 
-    let encryptInASCIIArmoredSwitch: UISwitch = {
+    private lazy var encryptInASCIIArmoredSwitch: UISwitch = {
         let uiSwitch = UISwitch()
         uiSwitch.onTintColor = Colors.systemBlue
         uiSwitch.sizeToFit()
@@ -49,10 +51,10 @@ class AdvancedSettingsTableViewController: UITableViewController {
         if tableView.cellForRow(at: indexPath) == eraseDataTableViewCell {
             let alert = UIAlertController(title: "ErasePasswordStoreData?".localize(), message: "EraseExplanation.".localize(), preferredStyle: UIAlertController.Style.alert)
             alert.addAction(
-                UIAlertAction(title: "ErasePasswordStoreData".localize(), style: UIAlertAction.Style.destructive) { [unowned self] _ -> Void in
+                UIAlertAction(title: "ErasePasswordStoreData".localize(), style: UIAlertAction.Style.destructive) { [unowned self] _ in
                     SVProgressHUD.show(withStatus: "Erasing...".localize())
-                    self.passwordStore.erase()
-                    self.navigationController!.popViewController(animated: true)
+                    passwordStore.erase()
+                    navigationController!.popViewController(animated: true)
                     SVProgressHUD.showSuccess(withStatus: "Done".localize())
                     SVProgressHUD.dismiss(withDelay: 1)
                 }
@@ -62,11 +64,11 @@ class AdvancedSettingsTableViewController: UITableViewController {
         } else if tableView.cellForRow(at: indexPath) == discardChangesTableViewCell {
             let alert = UIAlertController(title: "DiscardAllLocalChanges?".localize(), message: "DiscardExplanation.".localize(), preferredStyle: UIAlertController.Style.alert)
             alert.addAction(
-                UIAlertAction(title: "DiscardAllLocalChanges".localize(), style: UIAlertAction.Style.destructive) { [unowned self] _ -> Void in
+                UIAlertAction(title: "DiscardAllLocalChanges".localize(), style: UIAlertAction.Style.destructive) { [unowned self] _ in
                     SVProgressHUD.show(withStatus: "Resetting...".localize())
                     do {
-                        let numberDiscarded = try self.passwordStore.reset()
-                        self.navigationController!.popViewController(animated: true)
+                        let numberDiscarded = try passwordStore.reset()
+                        navigationController!.popViewController(animated: true)
                         SVProgressHUD.showSuccess(withStatus: "DiscardedCommits(%d)".localize(numberDiscarded))
                         SVProgressHUD.dismiss(withDelay: 1)
                     } catch {
@@ -76,6 +78,16 @@ class AdvancedSettingsTableViewController: UITableViewController {
             )
             alert.addAction(UIAlertAction.dismiss())
             present(alert, animated: true, completion: nil)
+        } else if tableView.cellForRow(at: indexPath) == clearSuggestionsTableViewCell {
+            ASCredentialIdentityStore.shared.removeAllCredentialIdentities { _, error in
+                if let error {
+                    SVProgressHUD.showError(withStatus: "FailedToClearQuickTypeSuggestions".localize(error))
+                    SVProgressHUD.dismiss(withDelay: 1)
+                } else {
+                    SVProgressHUD.showSuccess(withStatus: "Done".localize())
+                    SVProgressHUD.dismiss(withDelay: 1)
+                }
+            }
         }
     }
 

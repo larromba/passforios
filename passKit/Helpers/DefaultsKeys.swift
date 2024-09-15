@@ -9,6 +9,18 @@
 import Foundation
 import SwiftyUserDefaults
 
+// Workaround for Xcode 13: https://github.com/sunshinejr/SwiftyUserDefaults/issues/285
+
+public extension DefaultsSerializable where Self: Codable {
+    typealias Bridge = DefaultsCodableBridge<Self>
+    typealias ArrayBridge = DefaultsCodableBridge<[Self]>
+}
+
+public extension DefaultsSerializable where Self: RawRepresentable {
+    typealias Bridge = DefaultsRawRepresentableBridge<Self>
+    typealias ArrayBridge = DefaultsRawRepresentableArrayBridge<[Self]>
+}
+
 public var Defaults = DefaultsAdapter(defaults: UserDefaults(suiteName: Globals.groupIdentifier)!, keyStore: DefaultsKeys())
 
 public enum KeySource: String, DefaultsSerializable {
@@ -26,6 +38,7 @@ public extension DefaultsKeys {
     var pgpKeySource: DefaultsKey<KeySource?> { .init("pgpKeySource") }
     var pgpPublicKeyURL: DefaultsKey<URL?> { .init("pgpPublicKeyURL") }
     var pgpPrivateKeyURL: DefaultsKey<URL?> { .init("pgpPrivateKeyURL") }
+    var isYubiKeyEnabled: DefaultsKey<Bool> { .init("isYubiKeyEnabled", defaultValue: false) }
 
     // Keep them for legacy reasons.
     var pgpPublicKeyArmor: DefaultsKey<String?> { .init("pgpPublicKeyArmor") }
@@ -43,8 +56,6 @@ public extension DefaultsKeys {
     var gitSignatureEmail: DefaultsKey<String?> { .init("gitSignatureEmail") }
 
     var lastSyncedTime: DefaultsKey<Date?> { .init("lastSyncedTime") }
-
-    var isTouchIDOn: DefaultsKey<Bool> { .init("isTouchIDOn", defaultValue: false) }
 
     var isHideUnknownOn: DefaultsKey<Bool> { .init("isHideUnknownOn", defaultValue: false) }
     var isHideOTPOn: DefaultsKey<Bool> { .init("isHideOTPOn", defaultValue: false) }

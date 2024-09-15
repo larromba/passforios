@@ -21,10 +21,18 @@ class PasswordNavigationViewController: UIViewController {
     @IBOutlet var tableView: UITableView!
 
     var dataSource: PasswordNavigationDataSource?
-    var parentPasswordEntity: PasswordEntity?
+    var parentPasswordEntity: PasswordEntity? {
+        didSet {
+            parentPath = parentPasswordEntity?.path
+        }
+    }
+
+    // preserve parent path so it can be reloaded even if the parentPasswordEntity is deleted during the update process
+    private var parentPath: String?
 
     var viewingUnsyncedPasswords = false
     var tapTabBarTime: TimeInterval = 0
+    var searchText: String?
 
     lazy var passwordManager = PasswordManager(viewController: self)
 
@@ -34,15 +42,11 @@ class PasswordNavigationViewController: UIViewController {
         uiSearchController.obscuresBackgroundDuringPresentation = false
         uiSearchController.searchBar.sizeToFit()
         uiSearchController.searchBar.returnKeyType = .done
-        if #available(iOS 13.0, *) {
-            uiSearchController.searchBar.searchTextField.clearButtonMode = .whileEditing
-        }
+        uiSearchController.searchBar.searchTextField.clearButtonMode = .whileEditing
         return uiSearchController
     }()
 
-    lazy var searchBar: UISearchBar = {
-        self.searchController.searchBar
-    }()
+    lazy var searchBar: UISearchBar = self.searchController.searchBar
 
     lazy var refreshControl: UIRefreshControl = {
         let refreshControl = UIRefreshControl()
@@ -52,15 +56,11 @@ class PasswordNavigationViewController: UIViewController {
 
     lazy var addPasswordUIBarButtonItem: UIBarButtonItem = {
         var addPasswordUIBarButtonItem = UIBarButtonItem()
-        if #available(iOS 13.0, *) {
-            let addPasswordButton = UIButton(type: .system)
-            let plusImage = UIImage(systemName: "plus.circle", withConfiguration: UIImage.SymbolConfiguration(weight: .regular))
-            addPasswordButton.setImage(plusImage, for: .normal)
-            addPasswordButton.addTarget(self, action: #selector(self.addPasswordAction), for: .touchDown)
-            addPasswordUIBarButtonItem.customView = addPasswordButton
-        } else {
-            addPasswordUIBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(self.addPasswordAction))
-        }
+        let addPasswordButton = UIButton(type: .system)
+        let plusImage = UIImage(systemName: "plus.circle", withConfiguration: UIImage.SymbolConfiguration(weight: .regular))
+        addPasswordButton.setImage(plusImage, for: .normal)
+        addPasswordButton.addTarget(self, action: #selector(addPasswordAction), for: .touchDown)
+        addPasswordUIBarButtonItem.customView = addPasswordButton
         return addPasswordUIBarButtonItem
     }()
 
@@ -76,6 +76,7 @@ class PasswordNavigationViewController: UIViewController {
         configureTableView(in: parentPasswordEntity)
         configureNotification()
         configureSearchBar()
+        configureNavigationBar()
         requestNotificationPermission()
     }
 
@@ -109,6 +110,17 @@ class PasswordNavigationViewController: UIViewController {
         configureNavigationBar()
     }
 
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        if let text = searchText, !text.isEmpty {
+            DispatchQueue.main.async {
+                self.searchBar.text = text
+                self.searchController.isActive = true
+                self.searchBar.becomeFirstResponder()
+            }
+        }
+    }
+
     private func configureSearchBar() {
         if Defaults.isShowFolderOn {
             searchBar.scopeButtonTitles = SearchBarScope.allCases.map(\.localizedName)
@@ -121,6 +133,7 @@ class PasswordNavigationViewController: UIViewController {
         configureTableViewDataSource(in: dir, isShowFolder: Defaults.isShowFolderOn)
         tableView.addGestureRecognizer(gestureRecognizer)
         tableView.delegate = self
+        tableView.contentInset.top = 8
         let atribbutedTitle = "LastSynced".localize() + ": \(PasswordStore.shared.lastSyncedTimeString)"
         refreshControl.attributedTitle = NSAttributedString(string: atribbutedTitle)
         tableView.refreshControl = refreshControl
@@ -188,13 +201,15 @@ class PasswordNavigationViewController: UIViewController {
     private func configureNotification() {
         let notificationCenter = NotificationCenter.default
         // Reset the data table if some password (maybe another one) has been updated.
-        notificationCenter.addObserver(self, selector: #selector(actOnReloadTableViewRelatedNotification), name: .passwordStoreUpdated, object: nil)
+        notificationCenter.addObserver(self, selector: #selector(actOnPossiblePasswordStoreUpdate), name: .passwordStoreUpdated, object: nil)
         // Reset the data table if the disaply settings have been changed.
         notificationCenter.addObserver(self, selector: #selector(actOnReloadTableViewRelatedNotification), name: .passwordDisplaySettingChanged, object: nil)
         // Search entrypoint for home screen quick action.
         notificationCenter.addObserver(self, selector: #selector(actOnSearchNotification), name: .passwordSearch, object: nil)
         // A Siri shortcut can change the state of the app in the background. Hence, reload when opening the app.
-        notificationCenter.addObserver(self, selector: #selector(actOnReloadTableViewRelatedNotification), name: UIApplication.willEnterForegroundNotification, object: nil)
+        notificationCenter.addObserver(self, selector: #selector(actOnPossiblePasswordStoreUpdate), name: UIApplication.willEnterForegroundNotification, object: nil)
+        // Sync with remote done.
+        notificationCenter.addObserver(self, selector: #selector(actOnPasswordStoreSyncSucceeded), name: .passwordStoreSyncSucceeded, object: nil)
     }
 
     @objc
@@ -208,7 +223,7 @@ class PasswordNavigationViewController: UIViewController {
     func didTapNavigationBar(_ sender: UITapGestureRecognizer) {
         let location = sender.location(in: navigationController?.navigationBar)
         let hitView = navigationController?.navigationBar.hitTest(location, with: nil)
-        guard !(hitView is UIControl) else {
+        guard String(describing: hitView).contains("UINavigationBarContentView") else {
             return
         }
 
@@ -239,7 +254,7 @@ class PasswordNavigationViewController: UIViewController {
         if gesture.state == UIGestureRecognizer.State.began {
             let touchPoint = gesture.location(in: tableView)
             if let indexPath = tableView.indexPathForRow(at: touchPoint) {
-                guard let dataSource = dataSource else {
+                guard let dataSource else {
                     return
                 }
                 let passwordTableEntry = dataSource.getPasswordTableEntry(at: indexPath)
@@ -268,7 +283,7 @@ class PasswordNavigationViewController: UIViewController {
 extension PasswordNavigationViewController: UITableViewDelegate {
     func tableView(_: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        guard let dataSource = dataSource else {
+        guard let dataSource else {
             return
         }
         let entry = dataSource.getPasswordTableEntry(at: indexPath)
@@ -301,6 +316,14 @@ extension PasswordNavigationViewController: UITableViewDelegate {
     func tableView(_: UITableView, heightForRowAt _: IndexPath) -> CGFloat {
         UITableView.automaticDimension
     }
+
+    func tableView(_: UITableView, heightForHeaderInSection _: Int) -> CGFloat {
+        UITableView.automaticDimension
+    }
+
+    func tableView(_: UITableView, estimatedHeightForHeaderInSection _: Int) -> CGFloat {
+        UITableView.automaticDimension
+    }
 }
 
 extension PasswordNavigationViewController {
@@ -320,7 +343,7 @@ extension PasswordNavigationViewController {
 
     override func shouldPerformSegue(withIdentifier identifier: String, sender _: Any?) -> Bool {
         if identifier == "showPasswordDetail" {
-            guard PGPAgent.shared.isPrepared else {
+            guard Defaults.isYubiKeyEnabled || PGPAgent.shared.isPrepared else {
                 Utils.alert(title: "CannotShowPassword".localize(), message: "PgpKeyNotSet.".localize(), controller: self)
                 return false
             }
@@ -335,6 +358,12 @@ extension PasswordNavigationViewController {
 
     @IBAction
     private func cancelAddPassword(segue _: UIStoryboardSegue) {}
+
+    @IBAction
+    private func cancelEditPassword(segue _: UIStoryboardSegue) {}
+
+    @IBAction
+    private func saveEditPassword(segue _: UIStoryboardSegue) {}
 
     @IBAction
     private func saveAddPassword(segue: UIStoryboardSegue) {
@@ -353,6 +382,30 @@ extension PasswordNavigationViewController {
         }
     }
 
+    @objc
+    func actOnPossiblePasswordStoreUpdate() {
+        DispatchQueue.main.async {
+            if let path = self.parentPath {
+                // reload parent because all PasswordEntities are re-created on PasswordStore update
+                self.parentPasswordEntity = PasswordStore.shared.fetchPasswordEntity(with: path)
+
+                // pop to the root controller if the parent does not exist anymore
+                if self.parentPasswordEntity == nil {
+                    self.navigationController?.popToRootViewController(animated: true)
+                }
+            }
+
+            self.resetViews()
+        }
+    }
+
+    @objc
+    func actOnPasswordStoreSyncSucceeded() {
+        DispatchQueue.main.async {
+            self.configureTabBarItem()
+        }
+    }
+
     func resetViews() {
         configureTableView(in: parentPasswordEntity)
         tableView.reloadData()
@@ -365,6 +418,7 @@ extension PasswordNavigationViewController {
 
 extension PasswordNavigationViewController: UISearchBarDelegate {
     func search(matching text: String) {
+        searchText = text
         dataSource?.showTableEntries(matching: text)
         tableView.reloadData()
     }
@@ -391,6 +445,7 @@ extension PasswordNavigationViewController: UISearchBarDelegate {
             searchBar.selectedScopeButtonIndex = SearchBarScope.current.rawValue
         }
         activateSearch(searchBar.selectedScopeButtonIndex)
+        search(matching: searchBar.text ?? "")
     }
 
     func searchBar(_: UISearchBar, textDidChange searchText: String) {
@@ -408,6 +463,7 @@ extension PasswordNavigationViewController: UISearchBarDelegate {
     func cancelSearch() {
         configureTableView(in: parentPasswordEntity)
         dataSource?.isSearchActive = false
+        searchText = nil
         tableView.reloadData()
     }
 }
@@ -448,14 +504,14 @@ extension PasswordNavigationViewController: PasswordAlertPresenter {
         }
         DispatchQueue.global(qos: .userInitiated).async { [unowned self] in
             do {
-                let pullOptions = gitCredential.getCredentialOptions(passwordProvider: self.present)
+                let pullOptions = gitCredential.getCredentialOptions(passwordProvider: present)
                 try PasswordStore.shared.pullRepository(options: pullOptions) { git_transfer_progress, _ in
                     DispatchQueue.main.async {
                         SVProgressHUD.showProgress(Float(git_transfer_progress.pointee.received_objects) / Float(git_transfer_progress.pointee.total_objects), status: "PullingFromRemoteRepository".localize())
                     }
                 }
                 if PasswordStore.shared.numberOfLocalCommits > 0 {
-                    let pushOptions = gitCredential.getCredentialOptions(passwordProvider: self.present)
+                    let pushOptions = gitCredential.getCredentialOptions(passwordProvider: present)
                     try PasswordStore.shared.pushRepository(options: pushOptions) { current, total, _, _ in
                         DispatchQueue.main.async {
                             SVProgressHUD.showProgress(Float(current) / Float(total), status: "PushingToRemoteRepository".localize())
@@ -463,6 +519,7 @@ extension PasswordNavigationViewController: PasswordAlertPresenter {
                     }
                 }
                 DispatchQueue.main.async {
+                    NotificationCenter.default.post(name: .passwordStoreSyncSucceeded, object: nil)
                     SVProgressHUD.showSuccess(withStatus: "Done".localize())
                     SVProgressHUD.dismiss(withDelay: 1)
                 }

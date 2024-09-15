@@ -75,7 +75,7 @@ class QRScannerController: UIViewController, AVCaptureMetadataOutputObjectsDeleg
             // Initialize QR Code Frame to highlight the QR code
             qrCodeFrameView = UIView()
 
-            if let qrCodeFrameView = qrCodeFrameView {
+            if let qrCodeFrameView {
                 qrCodeFrameView.layer.borderColor = UIColor.green.cgColor
                 qrCodeFrameView.layer.borderWidth = 2
                 view.addSubview(qrCodeFrameView)
@@ -90,13 +90,16 @@ class QRScannerController: UIViewController, AVCaptureMetadataOutputObjectsDeleg
 
     func metadataOutput(_: AVCaptureMetadataOutput, didOutput metadataObjects: [AVMetadataObject], from _: AVCaptureConnection) {
         guard let metadataObj = metadataObjects.first as? AVMetadataMachineReadableCodeObject else {
-            return setNotDetected()
+            setNotDetected()
+            return
         }
         guard supportedCodeTypes.contains(metadataObj.type) else {
-            return setNotDetected()
+            setNotDetected()
+            return
         }
         guard let barCodeObject = videoPreviewLayer?.transformedMetadataObject(for: metadataObj) else {
-            return setNotDetected()
+            setNotDetected()
+            return
         }
 
         // draw a bounds on the found QR code
@@ -137,11 +140,12 @@ class QRScannerController: UIViewController, AVCaptureMetadataOutputObjectsDeleg
             preferredStyle: .alert
         )
         alertController.addAction(UIAlertAction(title: "Cancel".localize(), style: .default))
-        alertController.addAction(UIAlertAction(title: "Settings".localize(), style: .cancel) { _ in
-            if let url = URL(string: UIApplication.openSettingsURLString) {
-                UIApplication.shared.open(url)
+        alertController.addAction(
+            UIAlertAction(title: "Settings".localize(), style: .cancel) { _ in
+                if let url = URL(string: UIApplication.openSettingsURLString) {
+                    UIApplication.shared.open(url)
+                }
             }
-        }
         )
         present(alertController, animated: true)
     }

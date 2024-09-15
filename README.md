@@ -25,7 +25,8 @@ You can also help us test beta versions through [TestFlight](https://testflight.
 - Synchronize with your password Git repository.
 - User-friendly interface: search, long press to copy, copy and open link, etc.
 - Support one-time password tokens (two-factor authentication codes).
-- Autofill in Safari/Chrome and [supported apps](https://github.com/agilebits/onepassword-app-extension).
+- AutoFill in Safari/Chrome and [supported apps](https://github.com/agilebits/onepassword-app-extension).
+- Support YubiKey.
 
 ## Screenshots
 
@@ -46,8 +47,8 @@ For more, please read the [wiki page](https://github.com/mssun/passforios/wiki).
 
 ## Building Pass for iOS
 
-1. Install Libtool, Automake, CMake, Carthage, Go, SwiftLint, and SwiftFormat: `brew install libtool automake cmake carthage go swiftlint swiftformat`.
-2. Install dependencies via Carthage. Therefore, execute `./scripts/wcarthage update` and `./scripts/wcarthage bootstrap --platform iOS` in the root directory of the project. This may take some time.
+1. Install Carthage, Go, SwiftLint, and SwiftFormat: `brew install carthage go swiftlint swiftformat`.
+2. Install dependencies via Carthage. Therefore, execute `carthage bootstrap --platform iOS --use-xcframeworks` in the root directory of the project.
 3. Run `./scripts/gopenpgp_build.sh` to build GopenPGP.
 5. Open the `pass.xcodeproj` file in Xcode.
 6. Build & Run.

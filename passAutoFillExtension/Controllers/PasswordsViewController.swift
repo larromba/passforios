@@ -21,15 +21,11 @@ class PasswordsViewController: UIViewController {
         uiSearchController.searchBar.isTranslucent = true
         uiSearchController.obscuresBackgroundDuringPresentation = false
         uiSearchController.searchBar.sizeToFit()
-        if #available(iOS 13.0, *) {
-            uiSearchController.searchBar.searchTextField.clearButtonMode = .whileEditing
-        }
+        uiSearchController.searchBar.searchTextField.clearButtonMode = .whileEditing
         return uiSearchController
     }()
 
-    lazy var searchBar: UISearchBar = {
-        self.searchController.searchBar
-    }()
+    lazy var searchBar: UISearchBar = self.searchController.searchBar
 
     override func viewDidLoad() {
         super.viewDidLoad()

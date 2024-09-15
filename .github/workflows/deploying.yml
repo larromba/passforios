@@ -4,30 +4,35 @@ on:
   push:
     branches:
       - master
+      - 'release-*'
 
 jobs:
   build:
-    runs-on: macos-11
+    runs-on: macos-12
     strategy:
       matrix:
         channel: ['beta', 'release']
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
+    - uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: '2.7'
+        bundler-cache: true
     - name: Installing packages
       run: |
         brew update
-        brew install libtool automake cmake carthage swiftformat openssl libssh2
+        brew install carthage swiftformat
         brew install go || brew link --overwrite go
         brew install swiftlint || brew link --overwrite swiftlint
         gem install bundler
-    - uses: actions/cache@v2
+    - uses: actions/cache@v3
       id: carthage-cache
       with:
         path: Carthage
         key: ${{ runner.os }}-carthage-${{ secrets.CACHE_VERSION }}-${{ hashFiles('**/Cartfile.resolved') }}
         restore-keys: |
           ${{ runner.os }}-carthage-${{ secrets.CACHE_VERSION }}-
-    - uses: actions/cache@v2
+    - uses: actions/cache@v3
       id: gopenpgp-cache
       with:
         path: go
@@ -39,23 +44,24 @@ jobs:
         bundle config path vendor/bundle
         bundle install --jobs 4 --retry 3
     - name: Carthage
-      if: steps.carthage-cache.outputs.cache-hit != 'true'
+      if: ${{ steps.carthage-cache.outputs.cache-hit == false }}
       run: |
-        export PKG_CONFIG_PATH="/usr/local/opt/openssl/lib/pkgconfig:/usr/local/opt/libssh2/lib/pkgconfig/"
-        ./scripts/wcarthage bootstrap --platform iOS --no-use-binaries --cache-builds
+        carthage bootstrap --no-use-binaries --cache-builds --use-xcframeworks
     - name: GopenPGP
-      if: steps.gopenpgp-cache.outputs.cache-hit != 'true'
+      if: ${{ steps.gopenpgp-cache.outputs.cache-hit == false }}
       run: |
         export PATH="/usr/local/opt/go/bin:$PATH"
         ./scripts/gopenpgp_build.sh
     - name: Test
       run: bundle exec fastlane test
     - name: Deploy
-      if: github.event_name == 'push' && github.ref == 'refs/heads/master'
       run: bundle exec fastlane ${{ matrix.channel }}
       env:
         APPLE_ID: ${{ secrets.APPLE_ID }}
         APP_IDENTIFIER: ${{ secrets.APP_IDENTIFIER }}
+        APP_STORE_CONNECT_API_KEY_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_KEY_ID }}
+        APP_STORE_CONNECT_API_KEY_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ISSUER_ID }}
+        APP_STORE_CONNECT_API_KEY_KEY_CONTENT: ${{ secrets.APP_STORE_CONNECT_API_KEY_KEY_CONTENT }}
         DESTINATION_EMAIL: ${{ secrets.DESTINATION_EMAIL }}
         EMAIL_FROM_NAME: ${{ secrets.EMAIL_FROM_NAME }}
         EMAIL_REPLY_TO: ${{ secrets.EMAIL_REPLY_TO }}

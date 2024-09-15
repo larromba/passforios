@@ -1,4 +1,4 @@
-/* 
+/*
   Localizable.strings
   pass
 
@@ -41,6 +41,7 @@
 "MakeSurePgpAndGitProperlySet."                     = "Please make sure PGP key and Git server are properly set.";
 "RecoverySuggestion."                               = "Recovery suggestion: Wrong credential password/passphrase has been removed, please try again.";
 "NSURLFileAllocatedSizeKeyShouldAlwaysReturnValue." = "Huh? NSURLFileAllocatedSizeKey should always return a value.";
+"NoProperPassRepo."                                 = "The repository does not contain a .gpg-id file. Please set it up properly by performing 'pass init'. Then try again to load it into the app.";
 
 // Settings
 "PasswordGeneratorFlavor"           = "Style";
@@ -58,7 +59,6 @@
 "RandomString"                      = "Random String";
 "ApplesKeychainStyle"               = "Apple's Keychain Style";
 "XKCD"                              = "XKCD";
-"XKCDStyle"                         = "XKCD Style";
 
 // Git
 "FailedToFetchPasswords"                = "Failed to fetch passwords";
@@ -165,6 +165,9 @@
 "NotSet"                = "Not Set";
 "InvalidNameOrEmail"    = "Invalid name or e-mail";
 
+// Clear suggestions
+"FailedToClearQuickTypeSuggestions" = "Failed to clear QuickType suggestions: %@";
+
 // Erase password store
 "ErasePasswordStoreData?"   = "Erase password store data?";
 "ErasePasswordStoreData"    = "Erase Password Store Data";
@@ -207,6 +210,7 @@
 "On"        = "On";
 "Off"       = "Off";
 "Save"      = "Save";
+"Remove"    = "Remove";
 
 // Lock screen
 "EnterPasscode"         = "Enter passcode for Pass";

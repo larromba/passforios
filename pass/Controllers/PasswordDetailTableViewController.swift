@@ -7,23 +7,30 @@
 //
 
 import FavIcon
+import Gopenpgp
+import passAutoFillExtension
 import passKit
 import SVProgressHUD
 import UIKit
+import YubiKit
 
-class PasswordDetailTableViewController: UITableViewController, UIGestureRecognizerDelegate {
-    var passwordEntity: PasswordEntity?
+class PasswordDetailTableViewController: UITableViewController, UIGestureRecognizerDelegate, AlertPresenting {
+    var passwordEntity: PasswordEntity? {
+        didSet {
+            passwordPath = passwordEntity?.path
+        }
+    }
+
     private var password: Password?
     private var passwordImage: UIImage?
     private var oneTimePasswordIndexPath: IndexPath?
     private var shouldPopCurrentView = false
     private let passwordStore = PasswordStore.shared
-    private let keychain = AppKeychain.shared
 
-    private lazy var editUIBarButtonItem: UIBarButtonItem = {
-        let uiBarButtonItem = UIBarButtonItem(barButtonSystemItem: .edit, target: self, action: #selector(pressEdit))
-        return uiBarButtonItem
-    }()
+    // preserve path so it can be reloaded even if the passwordEntity is deleted during the update process
+    private var passwordPath: String?
+
+    private lazy var editUIBarButtonItem: UIBarButtonItem = .init(barButtonSystemItem: .edit, target: self, action: #selector(pressEdit))
 
     private struct TableSection {
         var type: PasswordDetailTableViewControllerSectionType
@@ -52,9 +59,11 @@ class PasswordDetailTableViewController: UITableViewController, UIGestureRecogni
         tableView.addGestureRecognizer(tapGesture)
         tapGesture.delegate = self
 
-        tableView.contentInset = UIEdgeInsets(top: -36, left: 0, bottom: 44, right: 0)
         tableView.rowHeight = UITableView.automaticDimension
         tableView.estimatedRowHeight = 52
+        let adjustForTabbarInsets = UIEdgeInsets(top: 0, left: 0, bottom: tabBarController!.tabBar.frame.height, right: 0)
+        tableView.contentInset = adjustForTabbarInsets
+        tableView.scrollIndicatorInsets = adjustForTabbarInsets
 
         editUIBarButtonItem.isEnabled = false
         navigationItem.rightBarButtonItem = editUIBarButtonItem
@@ -72,6 +81,9 @@ class PasswordDetailTableViewController: UITableViewController, UIGestureRecogni
 
         // reset the data table if the disaply settings have been changed
         NotificationCenter.default.addObserver(self, selector: #selector(decryptThenShowPasswordSelector), name: .passwordDetailDisplaySettingChanged, object: nil)
+
+        // A Siri shortcut can change the state of the app in the background. Hence, reload when opening the app.
+        NotificationCenter.default.addObserver(self, selector: #selector(actOnPossiblePasswordStoreUpdate), name: UIApplication.willEnterForegroundNotification, object: nil)
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -88,8 +100,16 @@ class PasswordDetailTableViewController: UITableViewController, UIGestureRecogni
         decryptThenShowPassword()
     }
 
-    private func decryptThenShowPassword(keyID: String? = nil) {
-        guard let passwordEntity = passwordEntity else {
+    private func decryptThenShowPassword() {
+        if Defaults.isYubiKeyEnabled, YubiKitDeviceCapabilities.supportsISO7816NFCTags {
+            decryptThenShowPasswordYubiKey()
+        } else {
+            decryptThenShowPasswordLocalKey()
+        }
+    }
+
+    private func decryptThenShowPasswordLocalKey(keyID: String? = nil) {
+        guard let passwordEntity else {
             Utils.alert(title: "CannotShowPassword".localize(), message: "PasswordDoesNotExist".localize(), controller: self, completion: {
                 self.navigationController!.popViewController(animated: true)
             })
@@ -107,7 +127,7 @@ class PasswordDetailTableViewController: UITableViewController, UIGestureRecogni
                     let alert = UIAlertController(title: "CannotShowPassword".localize(), message: AppError.pgpPrivateKeyNotFound(keyID: key).localizedDescription, preferredStyle: .alert)
                     alert.addAction(UIAlertAction.cancelAndPopView(controller: self))
                     let selectKey = UIAlertAction.selectKey(controller: self) { action in
-                        self.decryptThenShowPassword(keyID: action.title)
+                        self.decryptThenShowPasswordLocalKey(keyID: action.title)
                     }
                     alert.addAction(selectKey)
 
@@ -120,7 +140,7 @@ class PasswordDetailTableViewController: UITableViewController, UIGestureRecogni
                     alert.addAction(UIAlertAction.cancelAndPopView(controller: self))
                     alert.addAction(
                         UIAlertAction(title: "TryAgain".localize(), style: .default) { _ in
-                            self.decryptThenShowPassword()
+                            self.decryptThenShowPasswordLocalKey()
                         }
                     )
                     self.present(alert, animated: true, completion: nil)
@@ -236,9 +256,12 @@ class PasswordDetailTableViewController: UITableViewController, UIGestureRecogni
 
         // main section
         section = TableSection(type: .main)
-        let password = self.password!
+        let password = password!
         if let username = password.username {
             section.item.append(Constants.USERNAME_KEYWORD => username)
+        }
+        if let user = password.username {
+            section.item.append(Constants.USER_KEYWORD => user)
         }
         if let login = password.login {
             section.item.append(Constants.LOGIN_KEYWORD => login)
@@ -289,10 +312,10 @@ class PasswordDetailTableViewController: UITableViewController, UIGestureRecogni
     }
 
     private func updatePasswordImage(urlString: String) {
-        var newUrlString = urlString
+        var newURLString = urlString
         if urlString.lowercased().hasPrefix("http://") {
             // try to replace http url to https url
-            newUrlString = urlString.replacingOccurrences(
+            newURLString = urlString.replacingOccurrences(
                 of: "http://",
                 with: "https://",
                 options: .caseInsensitive,
@@ -302,7 +325,7 @@ class PasswordDetailTableViewController: UITableViewController, UIGestureRecogni
             // do nothing here
         } else {
             // if a url does not start with http or https, try to add https
-            newUrlString = "https://\(urlString)"
+            newURLString = "https://\(urlString)"
         }
 
 //        try? FavIcon.downloadPreferred(newUrlString) { [weak self] result in
@@ -331,8 +354,7 @@ class PasswordDetailTableViewController: UITableViewController, UIGestureRecogni
                     let nextHOTPItem = UIMenuItem(title: "NextPassword".localize(), action: #selector(LabelTableViewCell.getNextHOTP))
                     let openURLItem = UIMenuItem(title: "CopyAndOpen".localize(), action: #selector(LabelTableViewCell.openLink))
                     menuController.menuItems = [revealItem, concealItem, nextHOTPItem, openURLItem]
-                    menuController.setTargetRect(tappedCell.contentLabel.frame, in: tappedCell.contentLabel.superview!)
-                    menuController.setMenuVisible(true, animated: true)
+                    menuController.showMenu(from: tappedCell.contentLabel.superview!, rect: tappedCell.contentLabel.frame)
                 }
             }
         }
@@ -376,9 +398,10 @@ class PasswordDetailTableViewController: UITableViewController, UIGestureRecogni
 
     func openLink(to address: String?) {
         guard address != nil, let url = URL(string: formActualWebAddress(from: address!)) else {
-            return DispatchQueue.main.async {
+            DispatchQueue.main.async {
                 Utils.alert(title: "Error".localize(), message: "CannotFindValidUrl".localize(), controller: self, completion: nil)
             }
+            return
         }
         SecurePasteboard.shared.copy(textToCopy: password?.password)
         UIApplication.shared.open(url, options: [:], completionHandler: nil)
@@ -465,6 +488,13 @@ class PasswordDetailTableViewController: UITableViewController, UIGestureRecogni
         tableData[section].header
     }
 
+    override func tableView(_: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        if tableData[section].header != nil {
+            return 30
+        }
+        return UITableView.automaticDimension
+    }
+
     override func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
         if section == tableData.count - 1 {
             let view = UIView()
@@ -508,5 +538,78 @@ class PasswordDetailTableViewController: UITableViewController, UIGestureRecogni
             }
         }
         tableView.deselectRow(at: indexPath, animated: true)
+    }
+}
+
+extension PasswordDetailTableViewController {
+    @objc
+    func actOnPossiblePasswordStoreUpdate() {
+        DispatchQueue.main.async {
+            if let path = self.passwordPath {
+                // reload PasswordEntity because all PasswordEntities are re-created on PasswordStore update
+                self.passwordEntity = PasswordStore.shared.fetchPasswordEntity(with: path)
+
+                // dismiss if the PasswordEntity does not exist anymore
+                if self.passwordEntity == nil {
+                    self.navigationController?.popToRootViewController(animated: true)
+                } else {
+                    self.decryptThenShowPassword()
+                }
+            }
+        }
+    }
+
+    private func requestYubiKeyPIN(completion: @escaping (String) -> Void, cancellation: @escaping () -> Void) {
+        let alert = UIAlertController(title: "YubiKey PIN", message: "Verify YubiKey OpenPGP PIN.", preferredStyle: .alert)
+        alert.addAction(
+            UIAlertAction.cancel { _ in
+                self.navigationController!.popViewController(animated: true)
+                cancellation()
+            }
+        )
+        alert.addAction(
+            UIAlertAction.ok { _ in
+                let pin = alert.textFields?.first?.text ?? ""
+                completion(pin)
+            }
+        )
+        alert.addTextField { textField in
+            textField.isSecureTextEntry = true
+        }
+        present(alert, animated: true)
+    }
+
+    private func handleError(error: AppError) {
+        switch error {
+        case let .yubiKey(yubiKeyError):
+            let errorMessage = yubiKeyError.localizedDescription
+            YubiKitManager.shared.stopNFCConnection(withErrorMessage: errorMessage)
+            DispatchQueue.main.async {
+                self.navigationController?.popViewController(animated: true)
+            }
+        default:
+            DispatchQueue.main.async {
+                self.presentFailureAlert(message: error.localizedDescription) { _ in
+                    self.navigationController?.popViewController(animated: true)
+                }
+            }
+        }
+    }
+
+    private func handleCancellation() {
+        DispatchQueue.main.async {
+            self.navigationController?.popViewController(animated: true)
+        }
+    }
+
+    private func decryptThenShowPasswordYubiKey() {
+        guard let passwordEntity else {
+            handleError(error: AppError.other(message: "PasswordDoesNotExist"))
+            return
+        }
+        yubiKeyDecrypt(passwordEntity: passwordEntity, requestPIN: requestYubiKeyPIN, errorHandler: handleError, cancellation: handleCancellation) { password in
+            self.password = password
+            self.showPassword()
+        }
     }
 }

@@ -18,8 +18,8 @@ public class PGPAgent {
     }
 
     public func initKeys() throws {
-        guard let publicKey: String = keyStore.get(for: PgpKey.PUBLIC.getKeychainKey()),
-              let privateKey: String = keyStore.get(for: PgpKey.PRIVATE.getKeychainKey()) else {
+        guard let publicKey: String = keyStore.get(for: PGPKey.PUBLIC.getKeychainKey()),
+              let privateKey: String = keyStore.get(for: PGPKey.PRIVATE.getKeychainKey()) else {
             pgpInterface = nil
             throw AppError.keyImport
         }
@@ -47,7 +47,7 @@ public class PGPAgent {
     public func decrypt(encryptedData: Data, keyID: String, requestPGPKeyPassphrase: @escaping (String) -> String) throws -> Data? {
         // Init keys.
         try checkAndInit()
-        guard let pgpInterface = pgpInterface else {
+        guard let pgpInterface else {
             throw AppError.decryption
         }
 
@@ -82,7 +82,7 @@ public class PGPAgent {
 
     public func encrypt(plainData: Data, keyID: String) throws -> Data {
         try checkAndInit()
-        guard let pgpInterface = pgpInterface else {
+        guard let pgpInterface else {
             throw AppError.encryption
         }
         var keyID = keyID
@@ -120,15 +120,15 @@ public class PGPAgent {
 
     public func encrypt(plainData: Data) throws -> Data {
         try checkAndInit()
-        guard let pgpInterface = pgpInterface else {
+        guard let pgpInterface else {
             throw AppError.encryption
         }
         return try pgpInterface.encrypt(plainData: plainData, keyID: nil)
     }
 
     public var isPrepared: Bool {
-        keyStore.contains(key: PgpKey.PUBLIC.getKeychainKey())
-            && keyStore.contains(key: PgpKey.PRIVATE.getKeychainKey())
+        keyStore.contains(key: PGPKey.PUBLIC.getKeychainKey())
+            && keyStore.contains(key: PGPKey.PRIVATE.getKeychainKey())
     }
 
     private func checkAndInit() throws {

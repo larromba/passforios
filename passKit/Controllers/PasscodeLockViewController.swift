@@ -18,7 +18,6 @@ open class PasscodeLockViewController: UIViewController, UITextFieldDelegate {
 
     weak var passcodeTextField: UITextField?
     weak var biometryAuthButton: UIButton?
-    weak var forgotPasscodeButton: UIButton?
     open weak var cancelButton: UIButton?
 
     var isCancellable = false
@@ -73,7 +72,6 @@ open class PasscodeLockViewController: UIViewController, UITextFieldDelegate {
         forgotPasscodeButton.isHidden = isCancellable
         forgotPasscodeButton.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(forgotPasscodeButton)
-        self.forgotPasscodeButton = forgotPasscodeButton
 
         let cancelButton = UIButton(type: .custom)
         cancelButton.setTitle("Cancel".localize(), for: .normal)
@@ -131,7 +129,7 @@ open class PasscodeLockViewController: UIViewController, UITextFieldDelegate {
 
     override open func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        if let biometryAuthButton = biometryAuthButton {
+        if let biometryAuthButton {
             bioButtonPressedAction(biometryAuthButton)
         }
     }
@@ -189,12 +187,12 @@ open class PasscodeLockViewController: UIViewController, UITextFieldDelegate {
     func forgotPasscodeButtonPressedAction(_: UIButton) {
         let alert = UIAlertController(title: "ResetPass".localize(), message: "ResetPassExplanation.".localize(), preferredStyle: UIAlertController.Style.alert)
         alert.addAction(
-            UIAlertAction(title: "ErasePasswordStoreData".localize(), style: UIAlertAction.Style.destructive) { [unowned self] _ -> Void in
+            UIAlertAction(title: "ErasePasswordStoreData".localize(), style: UIAlertAction.Style.destructive) { [unowned self] _ in
                 let myContext = LAContext()
                 // If the device passcode is not set, reset the app.
                 guard myContext.canEvaluatePolicy(.deviceOwnerAuthentication, error: nil) else {
-                    self.passwordStore.erase()
-                    self.passcodeLockDidSucceed()
+                    passwordStore.erase()
+                    passcodeLockDidSucceed()
                     return
                 }
                 // If the device passcode is set, authentication is required.

@@ -1,5 +1,5 @@
 //
-//  SSHKeyUrlImportTableViewController.swift
+//  SSHKeyURLImportTableViewController.swift
 //  pass
 //
 //  Created by Mingshen Sun on 25/1/2017.
@@ -9,7 +9,7 @@
 import passKit
 import SVProgressHUD
 
-class SSHKeyUrlImportTableViewController: AutoCellHeightUITableViewController {
+class SSHKeyURLImportTableViewController: AutoCellHeightUITableViewController {
     @IBOutlet var privateKeyURLTextField: UITextField!
 
     var sshPrivateKeyURL: URL?
@@ -32,17 +32,19 @@ class SSHKeyUrlImportTableViewController: AutoCellHeightUITableViewController {
             savePassphraseAlert.addAction(UIAlertAction(title: "No".localize(), style: .default) { _ in })
             savePassphraseAlert.addAction(
                 UIAlertAction(title: "Yes".localize(), style: .destructive) { _ in
+                    self.sshPrivateKeyURL = privateKeyURL
                     self.performSegue(withIdentifier: "importSSHKeySegue", sender: self)
                 }
             )
-            return present(savePassphraseAlert, animated: true)
+            present(savePassphraseAlert, animated: true)
+            return
         }
         sshPrivateKeyURL = privateKeyURL
         performSegue(withIdentifier: "importSSHKeySegue", sender: self)
     }
 }
 
-extension SSHKeyUrlImportTableViewController: KeyImporter {
+extension SSHKeyURLImportTableViewController: KeyImporter {
     static let keySource = KeySource.url
     static let label = "DownloadFromUrl".localize()
 
@@ -60,6 +62,6 @@ extension SSHKeyUrlImportTableViewController: KeyImporter {
 
     func importKeys() throws {
         Defaults.gitSSHPrivateKeyURL = sshPrivateKeyURL
-        try KeyFileManager.PrivateSsh.importKey(from: Defaults.gitSSHPrivateKeyURL!)
+        try KeyFileManager.PrivateSSH.importKey(from: Defaults.gitSSHPrivateKeyURL!)
     }
 }
