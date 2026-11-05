@@ -14,96 +14,189 @@ import UIKit
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
+    func application(
+        _: UIApplication,
+        didFinishLaunchingWithOptions _: [UIApplication.LaunchOptionsKey: Any]?
+    ) -> Bool {
+        SVProgressHUD.setMinimumSize(CGSize(width: 150, height: 100))
+
+        UNUserNotificationCenter.current().delegate = NotificationCenterDispatcher.shared
+
+        return true
+    }
+
+    // MARK: - Scene Configuration
+
+    func application(
+        _: UIApplication,
+        configurationForConnecting connectingSceneSession: UISceneSession,
+        options _: UIScene.ConnectionOptions
+    ) -> UISceneConfiguration {
+        let configuration = UISceneConfiguration(
+            name: "Default Configuration",
+            sessionRole: connectingSceneSession.role
+        )
+
+        configuration.delegateClass = SceneDelegate.self
+
+        return configuration
+    }
+
+    // MARK: - Supported Orientations
+
+    func application(
+        _: UIApplication,
+        supportedInterfaceOrientationsFor window: UIWindow?
+    ) -> UIInterfaceOrientationMask {
+        if window?.rootViewController is PasscodeLockViewController {
+            window?.frame = UIScreen.main.bounds
+        }
+
+        return .all
+    }
+
+    // MARK: - Termination
+
+    func applicationWillTerminate(_: UIApplication) {
+        PersistenceController.shared.save()
+    }
+}
+
+class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     enum ViewTag: Int {
         case blur = 100, appicon
     }
 
     var window: UIWindow?
 
-    lazy var passcodeLockPresenter = PasscodeLockPresenter(mainWindow: self.window)
+    private var didConnect = false
 
-    func application(_: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        // Override point for customization after application launch.
-        SVProgressHUD.setMinimumSize(CGSize(width: 150, height: 100))
-        passcodeLockPresenter.present(windowLevel: UIApplication.shared.windows.last?.windowLevel.rawValue)
-        if let shortcutItem = launchOptions?[UIApplication.LaunchOptionsKey.shortcutItem] as? UIApplicationShortcutItem {
-            if shortcutItem.type == Globals.bundleIdentifier + ".search" {
-                perform(#selector(postSearchNotification), with: nil, afterDelay: 0.4)
-            }
+    lazy var passcodeLockPresenter = PasscodeLockPresenter(mainWindow: window)
+
+    // MARK: - Scene Lifecycle
+
+    func scene(
+        _ scene: UIScene,
+        willConnectTo _: UISceneSession,
+        options connectionOptions: UIScene.ConnectionOptions
+    ) {
+        guard let windowScene = scene as? UIWindowScene else {
+            return
         }
-        UNUserNotificationCenter.current().delegate = NotificationCenterDispatcher.shared
-        return true
-    }
 
-    func application(_: UIApplication, supportedInterfaceOrientationsFor window: UIWindow?) -> UIInterfaceOrientationMask {
-        if window?.rootViewController is PasscodeLockViewController {
-            window?.frame = UIScreen.main.bounds
-        }
-        return .all
-    }
+        let window = UIWindow(windowScene: windowScene)
 
-    @objc
-    func postSearchNotification() {
-        NotificationCenter.default.post(name: .passwordSearch, object: nil)
-    }
+        // Load the existing Main storyboard.
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+        window.rootViewController = storyboard.instantiateInitialViewController()
 
-    func application(_: UIApplication, performActionFor shortcutItem: UIApplicationShortcutItem, completionHandler _: @escaping (Bool) -> Void) {
-        if shortcutItem.type == Globals.bundleIdentifier + ".search" {
-            let tabBarController = window!.rootViewController as! UITabBarController
-            tabBarController.selectedIndex = 0
-            let navigationController = tabBarController.selectedViewController as! UINavigationController
-            navigationController.popToRootViewController(animated: false)
+        self.window = window
+        window.makeKeyAndVisible()
+
+        passcodeLockPresenter.present(
+            windowLevel: window.windowLevel.rawValue
+        )
+
+        didConnect = true
+
+        // Handle quick action on launch.
+        if let shortcutItem = connectionOptions.shortcutItem,
+           shortcutItem.type == Globals.bundleIdentifier + ".search" {
             perform(#selector(postSearchNotification), with: nil, afterDelay: 0.4)
         }
     }
 
-    func applicationWillResignActive(_: UIApplication) {
-        // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
-        // Use this method to pause ongoing tasks, disable timers, and invalidate graphics rendering callbacks. Games should use this method to pause the game.
+    func sceneWillResignActive(_: UIScene) {
+        guard let window else {
+            return
+        }
 
-        // Display a blur effect view
-        let blurEffect = UIBlurEffect(style: UIBlurEffect.Style.light)
+        // Display blur effect.
+        let blurEffect = UIBlurEffect(style: .light)
         let blurEffectView = UIVisualEffectView(effect: blurEffect)
-        blurEffectView.frame = (window?.frame)!
+
+        blurEffectView.frame = window.bounds
         blurEffectView.tag = ViewTag.blur.rawValue
         blurEffectView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-        window?.addSubview(blurEffectView)
 
-        // Display the Pass icon in the middle of the screen
+        window.addSubview(blurEffectView)
+
+        // Display app icon.
         let iconsDictionary = Bundle.main.infoDictionary?["CFBundleIcons"] as? NSDictionary
         let primaryIconsDictionary = iconsDictionary?["CFBundlePrimaryIcon"] as? NSDictionary
-        let iconFiles = primaryIconsDictionary!["CFBundleIconFiles"] as! NSArray
-        let appIcon = UIImage(named: iconFiles.lastObject as! String)
-        let appIconView = UIImageView(image: appIcon)
-        appIconView.layer.cornerRadius = (appIcon?.size.height)! / 5
-        appIconView.layer.masksToBounds = true
-        appIconView.center = (window?.center)!
-        appIconView.tag = ViewTag.appicon.rawValue
-        window?.addSubview(appIconView)
+        let iconFiles = primaryIconsDictionary?["CFBundleIconFiles"] as? [String]
+
+        if let iconName = iconFiles?.last,
+           let appIcon = UIImage(named: iconName) {
+            let appIconView = UIImageView(image: appIcon)
+
+            appIconView.layer.cornerRadius = appIcon.size.height / 5
+            appIconView.layer.masksToBounds = true
+            appIconView.center = CGPoint(
+                x: window.bounds.midX,
+                y: window.bounds.midY
+            )
+            appIconView.tag = ViewTag.appicon.rawValue
+
+            window.addSubview(appIconView)
+        }
 
         PersistenceController.shared.save()
     }
 
-    func applicationDidEnterBackground(_: UIApplication) {
-        // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
-        // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
+    func sceneDidEnterBackground(_: UIScene) {
+        // Release resources or save application state if necessary.
     }
 
-    func applicationWillEnterForeground(_: UIApplication) {
-        // Called as part of the transition from the background to the active state; here you can undo many of the changes made on entering the background.
-        passcodeLockPresenter.present(windowLevel: UIApplication.shared.windows.last?.windowLevel.rawValue)
+    func sceneWillEnterForeground(_: UIScene) {
+        guard didConnect else {
+            return
+        }
+
+        passcodeLockPresenter.present(
+            windowLevel: window?.windowLevel.rawValue
+        )
     }
 
-    func applicationDidBecomeActive(_: UIApplication) {
-        // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
-
+    func sceneDidBecomeActive(_: UIScene) {
         window?.viewWithTag(ViewTag.appicon.rawValue)?.removeFromSuperview()
         window?.viewWithTag(ViewTag.blur.rawValue)?.removeFromSuperview()
     }
 
-    func applicationWillTerminate(_: UIApplication) {
-        // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
-        // Saves changes in the application's managed object context before the application terminates.
+    func sceneDidDisconnect(_: UIScene) {
         PersistenceController.shared.save()
+        window = nil
+    }
+
+    // MARK: - Quick Actions
+
+    @objc
+    func postSearchNotification() {
+        NotificationCenter.default.post(
+            name: .passwordSearch,
+            object: nil
+        )
+    }
+
+    func windowScene(
+        _: UIWindowScene,
+        performActionFor shortcutItem: UIApplicationShortcutItem,
+        completionHandler: @escaping (Bool) -> Void
+    ) {
+        guard shortcutItem.type == Globals.bundleIdentifier + ".search",
+              let tabBarController = window?.rootViewController as? UITabBarController else {
+            completionHandler(false)
+            return
+        }
+
+        tabBarController.selectedIndex = 0
+
+        if let navigationController = tabBarController.selectedViewController as? UINavigationController {
+            navigationController.popToRootViewController(animated: false)
+        }
+
+        perform(#selector(postSearchNotification), with: nil, afterDelay: 0.4)
+
+        completionHandler(true)
     }
 }
