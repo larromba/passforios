@@ -42,8 +42,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/krzyzanowskim/ObjectivePGP",
       "state" : {
-        "revision" : "5629d849ec6c8f8ec733dffa9949c507468ec0b4",
-        "version" : "0.99.4"
+        "revision" : "0dc7ca7ffe193095dc37456b0c75be167a2026f4",
+        "version" : "0.99.2"
       }
     },
     {
@@ -68,8 +68,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-collections.git",
       "state" : {
-        "revision" : "a0cb0954ecb21e4e31b0070e6ed5674e8556685a",
-        "version" : "1.6.0"
+        "revision" : "f96b909e1a9e469620bc5037c1e24e00153f376f",
+        "version" : "1.7.5"
       }
     },
     {
@@ -77,8 +77,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/nicklockwood/SwiftFormat",
       "state" : {
-        "revision" : "468a7d32dedc8d352c191594b3b45d9fd8ba291b",
-        "version" : "0.55.5"
+        "revision" : "aa34bc80ed4cd69af391c912741594901d57c010",
+        "version" : "0.55.6"
       }
     },
     {
@@ -102,7 +102,7 @@
     {
       "identity" : "yubikit-ios",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/Yubico/yubikit-ios.git",
+      "location" : "https://github.com/Yubico/yubikit-ios",
       "state" : {
         "revision" : "2c4206263763743a2f1ca3309b87432588be637f",
         "version" : "4.7.0"
