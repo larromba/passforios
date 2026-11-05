@@ -15,7 +15,9 @@ public enum AppError: Error, Equatable {
     case keyImport
     case readingFile(fileName: String)
     case passwordDuplicated
+    case cannotDeleteNonEmptyDirectory
     case gitReset
+    case gitCommit
     case gitCreateSignature
     case gitPushNotSuccessful
     case pgpPublicKeyNotFound(keyID: String)
@@ -36,12 +38,13 @@ public enum YubiKeyError: Error, Equatable {
     case selectApplication(message: String)
     case verify(message: String)
     case decipher(message: String)
+    case other(message: String)
 }
 
 extension YubiKeyError: LocalizedError {
     public var errorDescription: String? {
         switch self {
-        case let .connection(message), let .decipher(message), let .selectApplication(message), let .verify(message):
+        case let .connection(message), let .decipher(message), let .other(message), let .selectApplication(message), let .verify(message):
             return message
         }
     }
@@ -56,6 +59,8 @@ extension AppError: LocalizedError {
             return localizationKey.localize(name)
         case let .pgpPrivateKeyNotFound(keyID), let .pgpPublicKeyNotFound(keyID):
             return localizationKey.localize(keyID)
+        case let .yubiKey(error):
+            return error.errorDescription
         case let .other(message):
             return message.localize()
         default:

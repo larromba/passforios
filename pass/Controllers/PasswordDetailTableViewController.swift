@@ -21,7 +21,7 @@ class PasswordDetailTableViewController: UITableViewController, UIGestureRecogni
         }
     }
 
-    private var password: Password?
+    var password: Password?
     private var passwordImage: UIImage?
     private var oneTimePasswordIndexPath: IndexPath?
     private var shouldPopCurrentView = false
@@ -30,7 +30,7 @@ class PasswordDetailTableViewController: UITableViewController, UIGestureRecogni
     // preserve path so it can be reloaded even if the passwordEntity is deleted during the update process
     private var passwordPath: String?
 
-    private lazy var editUIBarButtonItem: UIBarButtonItem = .init(barButtonSystemItem: .edit, target: self, action: #selector(pressEdit))
+    private lazy var editUIBarButtonItem = UIBarButtonItem(barButtonSystemItem: .edit, target: self, action: #selector(pressEdit))
 
     private struct TableSection {
         var type: PasswordDetailTableViewControllerSectionType
@@ -48,6 +48,8 @@ class PasswordDetailTableViewController: UITableViewController, UIGestureRecogni
     private enum PasswordDetailTableViewControllerSectionType {
         case name, main, addition, misc
     }
+
+    private var passwordYubiKeyDecryptor = PasswordYubiKeyDecryptor()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -69,7 +71,7 @@ class PasswordDetailTableViewController: UITableViewController, UIGestureRecogni
         navigationItem.rightBarButtonItem = editUIBarButtonItem
         navigationItem.largeTitleDisplayMode = .never
 
-        if let imageData = passwordEntity?.getImage() {
+        if let imageData = passwordEntity?.image {
             let image = UIImage(data: imageData as Data)
             passwordImage = image
         }
@@ -156,7 +158,7 @@ class PasswordDetailTableViewController: UITableViewController, UIGestureRecogni
             self?.editUIBarButtonItem.isEnabled = true
             if !Defaults.isHidePasswordImagesOn {
                 if let urlString = self?.password?.urlString {
-                    if self?.passwordEntity?.getImage() == nil {
+                    if self?.passwordEntity?.image == nil {
                         self?.updatePasswordImage(urlString: urlString)
                     }
                 }
@@ -260,7 +262,7 @@ class PasswordDetailTableViewController: UITableViewController, UIGestureRecogni
         if let username = password.username {
             section.item.append(Constants.USERNAME_KEYWORD => username)
         }
-        if let user = password.username {
+        if let user = password.user {
             section.item.append(Constants.USER_KEYWORD => user)
         }
         if let login = password.login {
@@ -441,13 +443,13 @@ class PasswordDetailTableViewController: UITableViewController, UIGestureRecogni
                 cell.labelImageConstraint.isActive = false
                 cell.labelCellConstraint.isActive = true
             }
-            let passwordName = passwordEntity!.getName()
-            if passwordEntity!.synced == false {
+            let passwordName = passwordEntity!.name
+            if passwordEntity!.isSynced == false {
                 cell.nameLabel.text = "\(passwordName) ↻"
             } else {
                 cell.nameLabel.text = passwordName
             }
-            cell.categoryLabel.text = passwordEntity!.getCategoryText()
+            cell.categoryLabel.text = passwordEntity!.dirText
             cell.selectionStyle = .none
             return cell
         case .addition, .main:
@@ -502,7 +504,7 @@ class PasswordDetailTableViewController: UITableViewController, UIGestureRecogni
             footerLabel.numberOfLines = 0
             footerLabel.font = UIFont.preferredFont(forTextStyle: .footnote)
             footerLabel.textColor = UIColor.gray
-            let dateString = passwordStore.getLatestUpdateInfo(filename: password!.url.path)
+            let dateString = passwordStore.getLatestUpdateInfo(path: password!.path)
             footerLabel.text = "LastUpdated".localize(dateString)
             view.addSubview(footerLabel)
             return view
@@ -559,12 +561,11 @@ extension PasswordDetailTableViewController {
         }
     }
 
-    private func requestYubiKeyPIN(completion: @escaping (String) -> Void, cancellation: @escaping () -> Void) {
+    private func requestYubiKeyPIN(completion: @escaping (String) -> Void) {
         let alert = UIAlertController(title: "YubiKey PIN", message: "Verify YubiKey OpenPGP PIN.", preferredStyle: .alert)
         alert.addAction(
             UIAlertAction.cancel { _ in
                 self.navigationController!.popViewController(animated: true)
-                cancellation()
             }
         )
         alert.addAction(
@@ -580,25 +581,10 @@ extension PasswordDetailTableViewController {
     }
 
     private func handleError(error: AppError) {
-        switch error {
-        case let .yubiKey(yubiKeyError):
-            let errorMessage = yubiKeyError.localizedDescription
-            YubiKitManager.shared.stopNFCConnection(withErrorMessage: errorMessage)
-            DispatchQueue.main.async {
+        DispatchQueue.main.async {
+            self.presentFailureAlert(message: error.localizedDescription) { _ in
                 self.navigationController?.popViewController(animated: true)
             }
-        default:
-            DispatchQueue.main.async {
-                self.presentFailureAlert(message: error.localizedDescription) { _ in
-                    self.navigationController?.popViewController(animated: true)
-                }
-            }
-        }
-    }
-
-    private func handleCancellation() {
-        DispatchQueue.main.async {
-            self.navigationController?.popViewController(animated: true)
         }
     }
 
@@ -607,9 +593,28 @@ extension PasswordDetailTableViewController {
             handleError(error: AppError.other(message: "PasswordDoesNotExist"))
             return
         }
-        yubiKeyDecrypt(passwordEntity: passwordEntity, requestPIN: requestYubiKeyPIN, errorHandler: handleError, cancellation: handleCancellation) { password in
-            self.password = password
-            self.showPassword()
+        let encryptedDataPath = passwordEntity.fileURL(in: PasswordStore.shared.storeURL)
+
+        guard let encryptedData = try? Data(contentsOf: encryptedDataPath) else {
+            handleError(error: AppError.other(message: "PasswordDoesNotExist"))
+            return
+        }
+        requestYubiKeyPIN { [self] pin in
+            Task {
+                do {
+                    let decryptedData = try await passwordYubiKeyDecryptor.yubiKeyDecrypt(encryptedData: encryptedData, pin: pin)
+                    guard let decryptedDataString = String(data: decryptedData, encoding: .utf8) else {
+                        throw AppError.yubiKey(.decipher(message: "Failed to convert plaintext to string."))
+                    }
+                    password = Password(name: passwordEntity.name, path: passwordEntity.path, plainText: decryptedDataString)
+                    self.password = password
+                    self.showPassword()
+                } catch let error as AppError {
+                    handleError(error: error)
+                } catch {
+                    handleError(error: AppError.yubiKey(.other(message: error.localizedDescription)))
+                }
+            }
         }
     }
 }

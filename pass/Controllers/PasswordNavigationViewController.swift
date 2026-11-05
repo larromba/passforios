@@ -133,6 +133,7 @@ class PasswordNavigationViewController: UIViewController {
         configureTableViewDataSource(in: dir, isShowFolder: Defaults.isShowFolderOn)
         tableView.addGestureRecognizer(gestureRecognizer)
         tableView.delegate = self
+        tableView.layoutIfNeeded()
         tableView.contentInset.top = 8
         let atribbutedTitle = "LastSynced".localize() + ": \(PasswordStore.shared.lastSyncedTimeString)"
         refreshControl.attributedTitle = NSAttributedString(string: atribbutedTitle)
@@ -154,6 +155,9 @@ class PasswordNavigationViewController: UIViewController {
         guard let tabBarItem = navigationController?.tabBarItem else {
             return
         }
+        if #available(iOS 15.0, *) {
+            tabBarItem.scrollEdgeAppearance = tabBarItem.standardAppearance
+        }
 
         let numberOfLocalCommits = PasswordStore.shared.numberOfLocalCommits
         if numberOfLocalCommits != 0 {
@@ -169,7 +173,7 @@ class PasswordNavigationViewController: UIViewController {
             navigationItem.title = "PasswordStore".localize()
         } else {
             navigationItem.largeTitleDisplayMode = .never
-            navigationItem.title = parentPasswordEntity?.getName()
+            navigationItem.title = parentPasswordEntity?.name
         }
         if viewingUnsyncedPasswords {
             navigationItem.title = "Unsynced"
@@ -261,7 +265,7 @@ class PasswordNavigationViewController: UIViewController {
                 if passwordTableEntry.isDir {
                     return
                 }
-                passwordManager.providePasswordPasteboard(with: passwordTableEntry.passwordEntity.getPath())
+                passwordManager.providePasswordPasteboard(with: passwordTableEntry.passwordEntity.path)
             }
         }
     }
@@ -335,7 +339,7 @@ extension PasswordNavigationViewController {
         } else if segue.identifier == "addPasswordSegue" {
             if let navController = segue.destination as? UINavigationController,
                let viewController = navController.topViewController as? AddPasswordTableViewController,
-               let path = parentPasswordEntity?.getPath() {
+               let path = parentPasswordEntity?.path {
                 viewController.defaultDirPrefix = "\(path)/"
             }
         }
@@ -348,7 +352,7 @@ extension PasswordNavigationViewController {
                 return false
             }
         } else if identifier == "addPasswordSegue" {
-            guard PGPAgent.shared.isPrepared, PasswordStore.shared.storeRepository != nil else {
+            guard PGPAgent.shared.isPrepared, PasswordStore.shared.gitRepository != nil else {
                 Utils.alert(title: "CannotAddPassword".localize(), message: "MakeSurePgpAndGitProperlySet.".localize(), controller: self)
                 return false
             }
@@ -408,6 +412,7 @@ extension PasswordNavigationViewController {
 
     func resetViews() {
         configureTableView(in: parentPasswordEntity)
+        tableView.layoutIfNeeded()
         tableView.reloadData()
         configureNavigationItem()
         configureTabBarItem()
@@ -523,17 +528,20 @@ extension PasswordNavigationViewController: PasswordAlertPresenter {
                     SVProgressHUD.showSuccess(withStatus: "Done".localize())
                     SVProgressHUD.dismiss(withDelay: 1)
                 }
-            } catch {
+            } catch let error as NSError {
                 gitCredential.delete()
                 DispatchQueue.main.async {
                     SVProgressHUD.dismiss()
-                    let error = error as NSError
                     var message = error.localizedDescription
                     if let underlyingError = error.userInfo[NSUnderlyingErrorKey] as? NSError {
                         message = message | "UnderlyingError".localize(underlyingError.localizedDescription)
                         if underlyingError.localizedDescription.contains("WrongPassphrase".localize()) {
                             message = message | "RecoverySuggestion.".localize()
                         }
+                    }
+                    if let mergeConflictFiles = error.userInfo[GTPullMergeConflictedFiles] as? NSArray {
+                        let mergeConflictFilesString = mergeConflictFiles.componentsJoined(by: ", ")
+                        message = message | "MergeConflictError".localize(mergeConflictFilesString)
                     }
                     DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(800)) {
                         Utils.alert(title: "Error".localize(), message: message, controller: self, completion: nil)

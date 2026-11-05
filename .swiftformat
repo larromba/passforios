@@ -3,7 +3,6 @@
 ## Excluded folders
 
 --exclude       \
-    Carthage,   \
     go,         \
     Pods,       \
     vendor
@@ -19,6 +18,7 @@
     blankLinesAroundMark,           \
     blankLinesAtEndOfScope,         \
     blankLinesAtStartOfScope,       \
+    blankLinesBetweenChainedFunctions,  \
 #    blankLinesBetweenImports,       \
     blankLinesBetweenScopes,        \
     blockComments,                  \
@@ -32,6 +32,7 @@
     extensionAccessControl,         \
     fileHeader,                     \
 #    genericExtensions,              \
+    headerFileName,                 \
     hoistPatternLet,                \
     indent,                         \
     initCoderUnavailable,           \
@@ -41,9 +42,11 @@
     linebreaks,                     \
     modifierOrder,                  \
 #    markTypes,                      \
+    noExplicitOwnership,            \
     numberFormatting,               \
 #    opaqueGenericParameters,        \
 #    organizeDeclarations,           \
+#    preferForLoop,                  \
     preferKeyPath,                  \
     redundantBackticks,             \
     redundantBreak,                 \
@@ -52,6 +55,7 @@
     redundantFileprivate,           \
     redundantGet,                   \
     redundantInit,                  \
+    redundantInternal,              \
     redundantLet,                   \
     redundantLetError,              \
     redundantNilInit,               \
@@ -62,11 +66,13 @@
     redundantRawValues,             \
     redundantReturn,                \
     redundantSelf,                  \
+    redundantStaticSelf,            \
     redundantType,                  \
     redundantVoidReturnType,        \
     semicolons,                     \
-    sortedImports,                  \
-    sortedSwitchCases,              \
+    sortImports,                    \
+    sortSwitchCases,                \
+    sortTypealiases,                \
     spaceAroundBraces,              \
     spaceAroundBrackets,            \
     spaceAroundComments,            \
@@ -93,6 +99,8 @@
     wrapAttributes,                 \
     wrapConditionalBodies,          \
 #    wrapEnumCases,                  \
+    wrapLoopBodies,                 \
+    wrapMultilineConditionalAssignment, \
 #    wrapMultilineStatementBraces,   \
     wrapSingleLineComments,         \
 #    wrapSwitchCases,                \

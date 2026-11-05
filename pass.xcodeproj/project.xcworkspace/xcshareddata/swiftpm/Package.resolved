@@ -1,4 +1,5 @@
 {
+  "originHash" : "d137dafa8e30f6e42ad2317049c4804cd349ed7d6d905fefc1d6c5008a6a5b4b",
   "pins" : [
     {
       "identity" : "base32",
@@ -41,8 +42,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/krzyzanowskim/ObjectivePGP",
       "state" : {
-        "revision" : "0dc7ca7ffe193095dc37456b0c75be167a2026f4",
-        "version" : "0.99.2"
+        "revision" : "5629d849ec6c8f8ec733dffa9949c507468ec0b4",
+        "version" : "0.99.4"
       }
     },
     {
@@ -51,6 +52,42 @@
       "location" : "https://github.com/mssun/OneTimePassword",
       "state" : {
         "revision" : "8d59e4abba762d0f1e9aed161081f7b3fe21daa0"
+      }
+    },
+    {
+      "identity" : "svprogresshud",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/SVProgressHUD/SVProgressHUD",
+      "state" : {
+        "revision" : "c33f7c775ba7feea6047a1fc3257f2e5863b44f7",
+        "version" : "2.3.1"
+      }
+    },
+    {
+      "identity" : "swift-collections",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-collections.git",
+      "state" : {
+        "revision" : "a0cb0954ecb21e4e31b0070e6ed5674e8556685a",
+        "version" : "1.6.0"
+      }
+    },
+    {
+      "identity" : "swiftformat",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/nicklockwood/SwiftFormat",
+      "state" : {
+        "revision" : "468a7d32dedc8d352c191594b3b45d9fd8ba291b",
+        "version" : "0.55.5"
+      }
+    },
+    {
+      "identity" : "swiftlintplugins",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/SimplyDanny/SwiftLintPlugins.git",
+      "state" : {
+        "revision" : "7a3d77f3dd9f91d5cea138e52c20cfceabf352de",
+        "version" : "0.58.2"
       }
     },
     {
@@ -65,12 +102,12 @@
     {
       "identity" : "yubikit-ios",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/Yubico/yubikit-ios",
+      "location" : "https://github.com/Yubico/yubikit-ios.git",
       "state" : {
-        "revision" : "0d8c74a99d634b048a0a3ded32f8382e989079c5",
-        "version" : "4.3.0"
+        "revision" : "2c4206263763743a2f1ca3309b87432588be637f",
+        "version" : "4.7.0"
       }
     }
   ],
-  "version" : 2
+  "version" : 3
 }
